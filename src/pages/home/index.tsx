@@ -11,7 +11,7 @@ export default function Index() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCounter((prevCounter) => (prevCounter + 1) % backgroundStorage.length);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(intervalId);
   }, []);
