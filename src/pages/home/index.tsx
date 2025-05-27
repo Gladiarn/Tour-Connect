@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
+const backgroundStorage: string[] = [
+  "bg-[url('/images/landing-img.svg')]",
+  "bg-[url('/images/OCEAN.jpg')]",
+  "bg-[url('/images/nature.jpg')]",
+];
 
 export default function Index() {
-  const backgroundStorage: string[] = [
-    "bg-[url('/images/landing-img.svg')]",
-    "bg-[url('/images/OCEAN.jpg')]",
-    "bg-[url('/images/nature.jpg')]",
-  ];
-
   const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
@@ -25,9 +24,9 @@ export default function Index() {
         ${backgroundIMG} w-full h-screen 
         bg-no-repeat bg-cover bg-center 
         flex flex-col px-[25px] font-poppins
+        transition-opacity duration-500 ease-in-out
       `}
     >
-      {}
       <div className="
         flex flex-col gap-[20px] 
         backdrop-blur-[5px] border border-white 
