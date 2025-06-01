@@ -16,13 +16,13 @@ export default function Navbar() {
       <div className="flex gap-[20px] w-fit h-full items-center">
         <div className="flex gap-[10px] w-fit h-full px-[10px] ">
           <div className="flex pr-[10px] border-r items-center font-light text-[16px] gap-[10px]">
-            <button className="flex bg-[#3c3d37] text-[#ffffff] w-[30px] h-[30px] justify-center rounded-full items-center gap-[10px] items-center"> 
+            <button className="flex bg-[#3c3d37] text-[#ffffff] w-[30px] h-[30px] justify-center rounded-full gap-[10px] items-center"> 
               <CiGlobe className="flex h-[20px] w-[20px] rounded-full" />
             </button>
             <p className="flex text-[#3C3D37]">English</p>
           </div>
           <div className="flex pr-[10px] items-center font-light text-[16px] gap-[10px]">
-            <button className="flex bg-[#3c3d37] w-[30px] h-[30px] justify-center rounded-full items-center gap-[10px] items-center">
+            <button className="flex bg-[#3c3d37] w-[30px] h-[30px] justify-center rounded-full gap-[10px] items-center">
               <CiUser className="text-[#ffffff] h-[20px] w-[20px] rounded-full" />
             </button>
             <p className="flex text-[#3C3D37]">User</p>
