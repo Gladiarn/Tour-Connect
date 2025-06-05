@@ -1,6 +1,6 @@
-import Navbar from "@/components/Navbar";
+import Destinations from "@/components/Destinations";
 export default function Home() {
   return <div>
-    <Navbar/>
+    <Destinations/>
   </div>;
 }
