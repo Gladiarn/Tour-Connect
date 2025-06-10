@@ -1,6 +1,5 @@
-import Packages from "@/components/Packages";
 export default function Home() {
   return <div>
-    <Packages/>
+    This is the Default Page
   </div>;
 }
