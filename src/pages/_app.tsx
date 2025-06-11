@@ -16,19 +16,14 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const noLayoutRoutes = ["/login"];
-
-  const isNoLayout = noLayoutRoutes.includes(router.pathname);
+  const hideNavbar = noLayoutRoutes.includes(router.pathname);
 
   return (
     <div className={`${poppins.variable} font-sans`}>
       <SectionProvider>
-        {isNoLayout ? (
+        <Layout hideNavbar={hideNavbar}>
           <Component {...pageProps} />
-        ) : (
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        )}
+        </Layout>
       </SectionProvider>
     </div>
   );

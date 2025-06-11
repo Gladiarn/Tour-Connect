@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
-type ActiveSection = "packages" | "destinations";
+type ActiveSection = "packages" | "destinations" | "popular";
 
 interface SectionContextType {
   activeSection: ActiveSection;
