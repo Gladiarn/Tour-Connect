@@ -5,7 +5,7 @@ const backgroundStorage: string[] = [
   "bg-[url('/images/nature.jpg')]",
 ];
 
-export default function Index() {
+export default function Landing() {
   const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
@@ -21,9 +21,9 @@ export default function Index() {
   return (
     <div
       className={`
-        ${backgroundIMG} w-full h-screen 
+        ${backgroundIMG} w-full min-h-[700px]
         bg-no-repeat bg-cover bg-center 
-        flex flex-col px-[25px] font-poppins
+        flex flex-col px-[100px] font-poppins
         transition-opacity duration-500 ease-in-out
       `}
     >
