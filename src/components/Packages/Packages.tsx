@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineStarBorder } from "react-icons/md";
 import { MdOutlineStar } from "react-icons/md";
-import { DatePickerRange } from "./ui/DatePickerRange";
+import { DatePickerRange } from "../ui/DatePickerRange";
 import { DateRange } from "react-day-picker";
 
 import {
@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import packagesDataTypes from "./types";
+import { packagesDataTypes } from "../types";
 
 export default function Packages() {
   const tourTypesData: string[] = ["Beach", "Hiking", "Cultural", "Adventure"];
