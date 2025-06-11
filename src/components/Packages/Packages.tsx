@@ -110,7 +110,6 @@ export default function Packages() {
               type="text"
               className="flex-grow focus:outline-0"
               placeholder="Price Range"
-              value={packagesData.priceRange}
             />
             <button className="flex items-center cursor-pointer">
               <IoIosArrowDown size={25} />
