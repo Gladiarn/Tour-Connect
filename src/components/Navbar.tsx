@@ -12,7 +12,7 @@ export default function Navbar() {
     <div className="flex flex-col w-full h-fit">
       <div className="flex w-full h-fit bg-white px-[100px] items-center py-[10px] justify-between border-b border-[#E0E0E0]">
         <div className="flex w-fit h-fit gap-[10px] items-center">
-          <div className="font-poppins flex font-semibold text-[#3C3D37] w-fit h-fit text-[28px]">
+          <div className="flex font-semibold text-[#3C3D37] w-fit h-fit text-[28px]">
             TourConnect
           </div>
           <div className="flex text-[16px] text-[#3C3D37] w-fit h-fit gap-[15px] px-[23px] font-light ">
