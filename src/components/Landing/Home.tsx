@@ -24,15 +24,17 @@ export default function Landing() {
         ${backgroundIMG} w-full min-h-[700px]
         bg-no-repeat bg-cover bg-center 
         flex flex-col px-[100px] font-poppins
-        transition-opacity duration-500 ease-in-out
+        transition-opacity duration-500 ease-in-out relative
       `}
     >
-      <div className="
+      <div
+        className="
         flex flex-col gap-[20px] 
         backdrop-blur-[5px] border border-white 
         px-[25px] py-[25px] h-fit w-[509px] 
-        rounded-[15px] mt-auto mb-auto
-      ">
+        rounded-[15px] mt-60
+      "
+      >
         <div className="flex flex-col w-full h-fit">
           <p className="text-[20px] w-full h-fit text-white font-medium">
             Welcome to TourConnect
@@ -42,8 +44,8 @@ export default function Landing() {
           </p>
           <p className="text-[15px] w-full h-fit text-white font-medium">
             Explore Eastern Visayas with ease! Discover stunning destinations,
-            book tours hassle-free, and experience the region like never
-            before. Your next adventure starts here!
+            book tours hassle-free, and experience the region like never before.
+            Your next adventure starts here!
           </p>
         </div>
         <div className="flex w-full items-center gap-[25px] justify-end h-fit text-white">
@@ -51,10 +53,12 @@ export default function Landing() {
             <a href="#">Learn More</a>
           </div>
           <div className="flex h-fit w-fit items-center">
-            <button className="
+            <button
+              className="
               flex bg-[#181C14] items-center font-bold text-white 
               px-[20px] py-[5px] rounded-[10px] text-[17px]
-            ">
+            "
+            >
               Sign-Up
             </button>
           </div>
@@ -62,7 +66,7 @@ export default function Landing() {
       </div>
 
       {/* Indicators */}
-      <div className="flex justify-center h-fit w-full items-center gap-[10px] px-[10px] py-[20px]">
+      <div className="flex justify-center h-fit w-full items-center gap-[10px] px-[10px] py-[20px] absolute bottom-0 left-[50%] translate-x-[-50%]">
         {backgroundStorage.map((_, index) => (
           <div
             key={index}

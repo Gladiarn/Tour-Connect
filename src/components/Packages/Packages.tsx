@@ -105,15 +105,31 @@ export default function Packages() {
               setDate={setDate}
             />
           </div>
-          <div className="flex items-center justify-between bg-white py-[10px] px-[10px] rounded-[10px] w-full h-fit font-medium text-[19px] relative ">
-            <input
-              type="text"
-              className="flex-grow focus:outline-0"
-              placeholder="Price Range"
-            />
-            <button className="flex items-center cursor-pointer">
-              <IoIosArrowDown size={25} />
-            </button>
+          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative ">
+            <Popover>
+              <PopoverTrigger asChild>
+                <div
+                  ref={triggerRef}
+                  className="flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
+                >
+                  <p>
+                    {packagesData.priceRange
+                      ? packagesData.priceRange
+                      : "Price Range"}
+                  </p>
+                  <button className="flex items-center">
+                    <IoIosArrowDown size={25} />
+                  </button>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent align="start" style={{ width }} className="p-4">
+                <div className="flex flex-col gap-1">
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">1,000 - 2,000</p>
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">2,000 - 3,000</p>
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">3,000 - 4,000</p>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
