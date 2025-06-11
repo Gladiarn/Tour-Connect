@@ -6,10 +6,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useSection } from "@/context/SectionContext";
 export default function Navbar() {
   const [language, setLanguage] = useState("English");
+  const { setActiveSection} = useSection();
   return (
-    <div className="flex flex-col w-full h-fit">
+    <div className="flex flex-col w-full h-fit fixed top-0 left-0 z-50">
       <div className="flex w-full h-fit bg-white px-[100px] items-center py-[10px] justify-between border-b border-[#E0E0E0]">
         <div className="flex w-fit h-fit gap-[10px] items-center">
           <div className="flex font-semibold text-[#3C3D37] w-fit h-fit text-[28px]">
@@ -18,25 +20,25 @@ export default function Navbar() {
           <div className="flex text-[16px] text-[#3C3D37] w-fit h-fit gap-[15px] px-[23px] font-light ">
             <a
               href="#"
-              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               Home
             </a>
             <a
               href="#"
-              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               My Bookings
             </a>
             <a
               href="#"
-              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               About
             </a>
             <a
               href="#"
-              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+              className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               Contact Us
             </a>
@@ -95,9 +97,9 @@ export default function Navbar() {
 
       <div className="w-full py-[5px] bg-white text-[#3C3D37]">
         <div className="flex gap-[10px] justify-center items-center">
-          <a href="#" className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Popular Destinations</a>
-          <a href="#" className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Destinations</a>
-          <a href="#" className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[2px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Packages</a>
+          <p onClick={()=>{setActiveSection("destinations")}} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Popular Destinations</p>
+          <p onClick={()=>{setActiveSection("destinations")}} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Destinations</p>
+          <p onClick={()=>{setActiveSection("packages")}} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">Packages</p>
         </div>
       </div>
     </div>
