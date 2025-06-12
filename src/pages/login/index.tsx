@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -56,7 +57,7 @@ export default function Index() {
             <div className="w-full" key="login">
               <div className="text-center flex flex-col items-center gap-[0.65rem]">
                 <div className="w-[80px] h-[80px] relative">
-                  <Image src={"/images/Icon.svg"} alt="Bus Icon" fill />{" "}
+                  <Image src={"/images/Icon.svg"} alt="Bus Icon" fill />
                 </div>
                 <h3 className="text-2xl font-semibold">
                   Welcome back! Let&apos;s continue your journey!
@@ -128,13 +129,13 @@ export default function Index() {
 
                 <p>
                   Don&apos;t have an account yet?{" "}
-                  <a
-                    href="/signup"
+                  <Link
+                    href={"#"}
                     className="text-[#8b5b00]"
-                    onClick={toggleLogin}
+                    onClick={(e)=>toggleLogin(e)}
                   >
                     Sign up here
-                  </a>
+                  </Link>
                   .
                 </p>
               </form>
@@ -145,13 +146,13 @@ export default function Index() {
                 </p>
                 <p>
                   By logging in, you confirm that you have read and agree to our{" "}
-                  <a href="" target="_blank" className="text-[#8b5b00]">
+                  <Link href="" target="_blank" className="text-[#8b5b00]">
                     Terms of Service
-                  </a>{" "}
+                  </Link>{" "}
                   and{" "}
-                  <a href="" target="_blank" className="text-[#8b5b00]">
+                  <Link href="" target="_blank" className="text-[#8b5b00]">
                     Privacy Policy
-                  </a>
+                  </Link>
                   , including any updates or amendments.
                 </p>
               </div>
@@ -279,13 +280,13 @@ export default function Index() {
 
                 <p>
                   Already have an account?{" "}
-                  <a
-                    href="/login"
+                  <Link
+                    href="#"
                     className="text-[#8b5b00]"
                     onClick={toggleLogin}
                   >
                     Log in here
-                  </a>
+                  </Link>
                   .
                 </p>
               </form>
@@ -296,13 +297,13 @@ export default function Index() {
                 </p>
                 <p>
                   By creating an account, you acknowledge and agree to our{" "}
-                  <a href="" target="_blank" className="text-[#8b5b00]">
+                  <Link href="" target="_blank" className="text-[#8b5b00]">
                     Terms of Service
-                  </a>{" "}
+                  </Link>{" "}
                   and{" "}
-                  <a href="" target="_blank" className="text-[#8b5b00]">
+                  <Link href="" target="_blank" className="text-[#8b5b00]">
                     Privacy Policy
-                  </a>
+                  </Link>
                   , including any updates or amendments.
                 </p>
               </div>

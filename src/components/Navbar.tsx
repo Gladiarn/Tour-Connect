@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSection } from "@/context/SectionContext";
+import Link from "next/link";
 export default function Navbar() {
   const [language, setLanguage] = useState("English");
   const { setActiveSection} = useSection();
@@ -18,24 +19,24 @@ export default function Navbar() {
             TourConnect
           </div>
           <div className="flex text-[16px] text-[#3C3D37] w-fit h-fit gap-[15px] px-[23px] font-light ">
-            <a
-              href="#"
+            <p
+              
               className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               Home
-            </a>
-            <a
-              href="#"
+            </p>
+            <p
+              
               className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               My Bookings
-            </a>
-            <a
-              href="#"
+            </p>
+            <p
+              
               className="relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
             >
               About
-            </a>
+            </p>
             <p
               onClick={()=>{window.scrollTo({top: document.body.scrollHeight, behavior: "smooth"})}}
               className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
@@ -89,9 +90,9 @@ export default function Navbar() {
               <p className="flex text-[#3C3D37]">User</p>
             </div>
           </div>
-          <a href="/login" className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
+          <Link href="/login" className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
             Log-In
-          </a>
+          </Link>
         </div>
       </div>
 
