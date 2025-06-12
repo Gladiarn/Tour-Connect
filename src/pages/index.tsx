@@ -2,7 +2,7 @@ import Destinations from "@/components/Destinations/Destinations";
 import Landing from "@/components/Landing/Home";
 import First from "@/components/Messages/First";
 import Packages from "@/components/Packages/Packages";
-import Popular from "@/components/Popular/Popular";
+
 import { useSection } from "@/context/SectionContext";
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
   const sectionComponents = {
     "packages": <Packages />,
     "destinations": <Destinations />,
-    "popular" : <Popular />,
+    "popular" : <Destinations/>
   }
   return (
     <div className="bg-[url]">
