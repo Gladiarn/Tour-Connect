@@ -2,15 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineStarBorder } from "react-icons/md";
 import { MdOutlineStar } from "react-icons/md";
-import { DatePickerRange } from "../ui/DatePickerRange";
+// import { DatePickerRange } from "../ui/DatePickerRange";
 import { DateRange } from "react-day-picker";
-
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { packagesDataTypes } from "../types";
+import { Calendar as CalendarIcon } from "lucide-react";
+
+const dateFormatOptions: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+};
 
 export default function Packages() {
   const tourTypesData: string[] = ["Beach", "Hiking", "Cultural", "Adventure"];
@@ -37,12 +44,14 @@ export default function Packages() {
     dateRange: { startDate: undefined, endDate: undefined },
     priceRange: "",
   });
-  const dataSetter = <K extends keyof packagesDataTypes>(key: K, value: packagesDataTypes[K]) => {
-
-    setPackagesData((prevData)=>({
+  const dataSetter = <K extends keyof packagesDataTypes>(
+    key: K,
+    value: packagesDataTypes[K]
+  ) => {
+    setPackagesData((prevData) => ({
       ...prevData,
-      [key]:value
-    }))
+      [key]: value,
+    }));
   };
 
   return (
@@ -86,7 +95,7 @@ export default function Packages() {
                   {tourTypesData.map((tour, index) => (
                     <div
                       onClick={() => {
-                        dataSetter("tourType", tour)
+                        dataSetter("tourType", tour);
                       }}
                       className="p-1 hover:text-blue-500 cursor-pointer text-[17px]"
                       key={index}
@@ -98,20 +107,43 @@ export default function Packages() {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="flex items-center justify-between rounded-[10px] w-full h-fit">
-            <DatePickerRange
-              className="w-full h-full"
-              date={date}
-              setDate={setDate}
-            />
+          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative">
+            <Popover>
+              <PopoverTrigger asChild>
+                <div
+                  ref={triggerRef}
+                  className="border-red-900 flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
+                >
+                  <p>
+                    {packagesData.dateRange.startDate &&
+                    packagesData.dateRange.endDate
+                      ? packagesData.dateRange.startDate.toLocaleDateString("en-US", dateFormatOptions) +
+                        " - " +
+                        packagesData.dateRange.endDate.toLocaleDateString("en-US", dateFormatOptions)
+                      : "Select Date Range"}
+                  </p>
+                  <CalendarIcon className="h-[20px]"/>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-full p-0 border-none">
+                <Calendar
+                  mode="range"
+                  numberOfMonths={2}
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-lg border shadow-sm"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative ">
+          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative">
             <Popover>
               <PopoverTrigger asChild>
                 <div
                   ref={triggerRef}
                   className="flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
                 >
+                  
                   <p>
                     {packagesData.priceRange
                       ? packagesData.priceRange
@@ -124,9 +156,15 @@ export default function Packages() {
               </PopoverTrigger>
               <PopoverContent align="start" style={{ width }} className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">1,000 - 2,000</p>
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">2,000 - 3,000</p>
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]">3,000 - 4,000</p>
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "1,000 - 2,000")}>
+                    1,000 - 2,000
+                  </p>
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "2,000 - 3,000")}>
+                    2,000 - 3,000
+                  </p>
+                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "3,000 - 4,000")}>
+                    3,000 - 4,000
+                  </p>
                 </div>
               </PopoverContent>
             </Popover>
@@ -139,7 +177,7 @@ export default function Packages() {
             className="flex w-full rounded-t-[10px] h-[173px]"
             style={{
               backgroundImage: "url('/images/kalanggaman.jpg')",
-              backgroundSize: "100%", // or 100%, 90%, etc.
+              backgroundSize: "100%",
               backgroundPosition: "30% 10%",
               backgroundRepeat: "no-repeat",
             }}
@@ -162,11 +200,6 @@ export default function Packages() {
 
               <button
                 className="flex w-full h-fit cursor-pointer py-[10px] gap-[10px] bg-[#3C3D37] items-center justify-center rounded-[10px] text-white"
-                onClick={() => {
-                  alert(
-                    packagesData.tourType
-                  );
-                }}
               >
                 View More
               </button>
