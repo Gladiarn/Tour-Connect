@@ -87,7 +87,7 @@ export default function Navbar() {
               <button className="flex bg-[#3c3d37] w-[30px] h-[30px] justify-center rounded-full gap-[10px] items-center">
                 <CiUser className="text-[#ffffff] h-[20px] w-[20px] rounded-full" />
               </button>
-              <p className="flex text-[#3C3D37]">User</p>
+              <p className="flex text-[#3C3D37]">Guest</p>
             </div>
           </div>
           <Link href="/login" className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">

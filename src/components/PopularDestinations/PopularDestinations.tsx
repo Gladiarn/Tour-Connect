@@ -13,7 +13,7 @@ export default function PopularDestinations() {
           Popular Destination
         </p>
         <p className="flex text-white text-[32px] font-normal ">
-          Discover the beauty of Eastern Visayas – from pristine beaches to
+          Discover the beauty of Eastern Visayas from pristine beaches to
           hidden gems in the mountains.
         </p>
         <div className="flex w-full h-fit">
