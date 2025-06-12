@@ -2,7 +2,7 @@ import React from "react";
 import { MdOutlineStarBorder } from "react-icons/md";
 import { MdOutlineStar } from "react-icons/md";
 
-export default function Popular() {
+export default function PopularDestinations() {
   return (
     <div className="flex flex-col items-center justify-center w-full h-fit">
       <div
