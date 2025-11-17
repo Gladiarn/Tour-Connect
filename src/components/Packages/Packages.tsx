@@ -57,7 +57,7 @@ export default function Packages() {
   return (
     <div className="flex flex-col w-full h-fit bg-white">
       <div
-        className="flex flex-col w-full items-center justify-center h-fit gap-[30px] pl-[300px] pt-[130px] pr-[300px] pb-[20px]"
+        className="flex flex-col w-full items-center justify-center h-fit gap-[30px] pl-[150px] pt-[130px] pr-[150px] pb-[20px]"
         style={{
           backgroundImage: "url('/images/packages.avif')",
           backgroundSize: "100%", // or 100%, 90%, etc.
@@ -171,7 +171,7 @@ export default function Packages() {
           </div>
         </div>
       </div>
-      <div className="flex w-full h-fit bg-white gap-[30px] flex-wrap items-center justify-center px-[180px] py-[20px]">
+      <div className="flex w-full h-fit bg-white gap-[30px] flex-wrap items-center justify-center px-[90px] py-[20px]">
         <div className="flex flex-col w-[525px] h-[307px]">
           <div
             className="flex w-full rounded-t-[10px] h-[173px]"
