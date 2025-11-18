@@ -21,7 +21,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 export default function Packages() {
 
 
-const [packagesDisplay, setPackagesDisplay] = useState<packagesDisplayTypes[]>([
+const [packagesDisplay] = useState<packagesDisplayTypes[]>([
   {
     name: "Kalanggaman Island Tour",
     location: "Palompon, Leyte",
