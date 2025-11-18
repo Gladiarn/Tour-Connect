@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { MdOutlineStarBorder } from "react-icons/md";
-import { MdOutlineStar } from "react-icons/md";
 // import { DatePickerRange } from "../ui/DatePickerRange";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
@@ -10,8 +8,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { packagesDataTypes } from "../types";
+import { packagesDataTypes, packagesDisplayTypes } from "../types";
 import { Calendar as CalendarIcon } from "lucide-react";
+import PackageCard from "./PackageCard";
 
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -20,6 +19,71 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 };
 
 export default function Packages() {
+
+
+const [packagesDisplay, setPackagesDisplay] = useState<packagesDisplayTypes[]>([
+  {
+    name: "Kalanggaman Island Tour",
+    location: "Palompon, Leyte",
+    inclusions: [
+      "Boat Transfer",
+      "Entrance Fee",
+      "Lunch Buffet",
+      "Tour Guide"
+    ],
+    price: 12500,
+    images: [
+      "https://www.vacationhive.com/images/hives/13/13-kalanggaman-island-secondary-banner.jpg",
+      "https://www.divescotty.com/images/social-media/kalanggaman-island_1440.jpg",
+      "https://cebutrip.net/files/4f2cd067d3fc8dd7d2dc80366c6a6690.jpg"
+    ],
+    packsize: {
+      min: 2,
+      max: 5
+    }
+  },
+    {
+    name: "Kalanggaman Island Tour",
+    location: "Palompon, Leyte",
+    inclusions: [
+      "Boat Transfer",
+      "Entrance Fee",
+      "Lunch Buffet",
+      "Tour Guide"
+    ],
+    price: 12500,
+    images: [
+      "https://www.vacationhive.com/images/hives/13/13-kalanggaman-island-secondary-banner.jpg",
+      "https://www.divescotty.com/images/social-media/kalanggaman-island_1440.jpg",
+      "https://cebutrip.net/files/4f2cd067d3fc8dd7d2dc80366c6a6690.jpg"
+    ],
+    packsize: {
+      min: 2,
+      max: 5
+    }
+  },
+    {
+    name: "Kalanggaman Island Tour",
+    location: "Palompon, Leyte",
+    inclusions: [
+      "Boat Transfer",
+      "Entrance Fee",
+      "Lunch Buffet",
+      "Tour Guide"
+    ],
+    price: 12500,
+    images: [
+      "https://www.vacationhive.com/images/hives/13/13-kalanggaman-island-secondary-banner.jpg",
+      "https://www.divescotty.com/images/social-media/kalanggaman-island_1440.jpg",
+      "https://cebutrip.net/files/4f2cd067d3fc8dd7d2dc80366c6a6690.jpg"
+    ],
+    packsize: {
+      min: 2,
+      max: 5
+    }
+  }
+]);
+
   const tourTypesData: string[] = ["Beach", "Hiking", "Cultural", "Adventure"];
   const [date, setDate] = useState<DateRange | undefined>(undefined);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -44,6 +108,7 @@ export default function Packages() {
     dateRange: { startDate: undefined, endDate: undefined },
     priceRange: "",
   });
+
   const dataSetter = <K extends keyof packagesDataTypes>(
     key: K,
     value: packagesDataTypes[K]
@@ -57,35 +122,35 @@ export default function Packages() {
   return (
     <div className="flex flex-col w-full h-fit bg-white">
       <div
-        className="flex flex-col w-full items-center justify-center h-fit gap-[30px] pl-[300px] pt-[130px] pr-[300px] pb-[20px]"
+        className="flex flex-col w-full items-center justify-center h-fit gap-[20px] lg:gap-[30px] p-[30px] py-[50px]"
         style={{
           backgroundImage: "url('/images/packages.avif')",
-          backgroundSize: "100%", // or 100%, 90%, etc.
+          backgroundSize: "cover",
           backgroundPosition: "30% 59%",
           backgroundRepeat: "no-repeat",
         }}
       >
-        <p className="flex font-bold text-[64px] text-white">
+        <p className="flex font-bold text-[32px] lg:text-[64px] text-white">
           Discover Adventure Packages
         </p>
-        <p className="flex font-normal text-[26px] text-white">
+        <p className="flex font-normal text-[14px] lg:text-[26px] text-white text-center">
           Curated experiences across the breathtaking spots of Eastern Visayas
         </p>
 
-        <div className="flex w-full font-black h-fit gap-[30px] px-[10px] items-center justify-center py-[10px] text-[#3C3D37] ">
-          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative ">
+        <div className="max-w-[1200px] w-full flex gap-5">
+          <div className="w-full">
             <Popover>
               <PopoverTrigger asChild>
                 <div
                   ref={triggerRef}
-                  className="flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
+                  className="focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between w-full bg-white text-black rounded-md"
                 >
                   <p>
                     {packagesData.tourType
                       ? packagesData.tourType
                       : "Tour Type"}
                   </p>
-                  <button className="flex items-center">
+                  <button className="flex items-center cursor-pointer">
                     <IoIosArrowDown size={25} />
                   </button>
                 </div>
@@ -107,22 +172,26 @@ export default function Packages() {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative">
+
+          <div className="w-full">
             <Popover>
               <PopoverTrigger asChild>
-                <div
-                  ref={triggerRef}
-                  className="border-red-900 flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
-                >
+                <div className="focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between w-full bg-white text-black rounded-md">
                   <p>
                     {packagesData.dateRange.startDate &&
                     packagesData.dateRange.endDate
-                      ? packagesData.dateRange.startDate.toLocaleDateString("en-US", dateFormatOptions) +
+                      ? packagesData.dateRange.startDate.toLocaleDateString(
+                          "en-US",
+                          dateFormatOptions
+                        ) +
                         " - " +
-                        packagesData.dateRange.endDate.toLocaleDateString("en-US", dateFormatOptions)
-                      : "Select Date Range"}
+                        packagesData.dateRange.endDate.toLocaleDateString(
+                          "en-US",
+                          dateFormatOptions
+                        )
+                      : "Select Duration"}
                   </p>
-                  <CalendarIcon className="h-[20px]"/>
+                  <CalendarIcon className="h-[20px]" />
                 </div>
               </PopoverTrigger>
               <PopoverContent align="start" className="w-full p-0 border-none">
@@ -136,14 +205,14 @@ export default function Packages() {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="flex items-center justify-between bg-white rounded-[10px] w-full h-fit font-medium text-[19px] relative">
+
+          <div className="w-full">
             <Popover>
               <PopoverTrigger asChild>
                 <div
                   ref={triggerRef}
-                  className="flex-grow focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between"
+                  className="focus:outline-0 p-[10px] cursor-pointer flex items-center justify-between w-full bg-white text-black rounded-md"
                 >
-                  
                   <p>
                     {packagesData.priceRange
                       ? packagesData.priceRange
@@ -156,89 +225,46 @@ export default function Packages() {
               </PopoverTrigger>
               <PopoverContent align="start" style={{ width }} className="p-4">
                 <div className="flex flex-col gap-1">
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "1,000 - 2,000")}>
-                    1,000 - 2,000
+                  <p
+                    className="p-1 hover:text-blue-500 cursor-pointer text-[17px]"
+                    onClick={() => dataSetter("priceRange", "1,000 - 2,000")}
+                  >
+                    1,000 - 5,000
                   </p>
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "2,000 - 3,000")}>
-                    2,000 - 3,000
+                  <p
+                    className="p-1 hover:text-blue-500 cursor-pointer text-[17px]"
+                    onClick={() => dataSetter("priceRange", "2,000 - 3,000")}
+                  >
+                    5,000 - 10,000
                   </p>
-                  <p className="p-1 hover:text-blue-500 cursor-pointer text-[17px]" onClick={() => dataSetter("priceRange", "3,000 - 4,000")}>
-                    3,000 - 4,000
+                  <p
+                    className="p-1 hover:text-blue-500 cursor-pointer text-[17px]"
+                    onClick={() => dataSetter("priceRange", "3,000 - 4,000")}
+                  >
+                    10,000 - 15,000
                   </p>
+
+                                    <p
+                    className="p-1 hover:text-blue-500 cursor-pointer text-[17px]"
+                    onClick={() => dataSetter("priceRange", "3,000 - 4,000")}
+                  >
+                    15,000+
+                  </p>
+
                 </div>
               </PopoverContent>
             </Popover>
           </div>
         </div>
       </div>
-      <div className="flex w-full h-fit bg-white gap-[30px] flex-wrap items-center justify-center px-[180px] py-[20px]">
-        <div className="flex flex-col w-[525px] h-[307px]">
-          <div
-            className="flex w-full rounded-t-[10px] h-[173px]"
-            style={{
-              backgroundImage: "url('/images/kalanggaman.jpg')",
-              backgroundSize: "100%",
-              backgroundPosition: "30% 10%",
-              backgroundRepeat: "no-repeat",
-            }}
-          ></div>
-          <div className="flex flex-col w-full px-[10px] py-[10px] ">
-            <p className="flex font-medium text-[25px] text-black">
-              Kalanggaman Island
-            </p>
-            <p className="flex font-normal text-[20px] text-black">
-              Palompon, Leyte
-            </p>
-            <div className="flex w-full h-fit bg-white gap-[250px]">
-              <div className="flex w-full h-fit">
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-              </div>
 
-              <button
-                className="flex w-full h-fit cursor-pointer py-[10px] gap-[10px] bg-[#3C3D37] items-center justify-center rounded-[10px] text-white"
-              >
-                View More
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col w-[525px] h-[307px]">
-          <div
-            className="flex w-full rounded-t-[10px] h-[173px]"
-            style={{
-              backgroundImage: "url('/images/cave.jpg')",
-              backgroundSize: "100%", // or 100%, 90%, etc.
-              backgroundPosition: "30% 80%",
-              backgroundRepeat: "no-repeat",
-            }}
-          ></div>
-          <div className="flex flex-col w-full px-[10px] py-[10px] ">
-            <p className="flex font-medium text-[25px] text-black">
-              Sohoton Cave
-            </p>
-            <p className="flex font-normal text-[20px] text-black">
-              Basey, Samar
-            </p>
-            <div className="flex w-full h-fit bg-white gap-[250px]">
-              <div className="flex w-full h-fit">
-                <MdOutlineStar className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-                <MdOutlineStarBorder className="flex h-[30px] w-[30px] text-yellow-500" />
-              </div>
-
-              <button className="flex w-full h-fit cursor-pointer py-[10px] gap-[10px] bg-[#3C3D37] items-center justify-center rounded-[10px] text-white">
-                View More
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Cards Section */}
+      <div className="w-full border h-fit p-[30px] flex flex-col gap-[30px] items-center">
+            {
+              packagesDisplay?.map((packages, index)=> (
+                <PackageCard key={index} packages={packages}/>
+              ))
+            }
       </div>
     </div>
   );

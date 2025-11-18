@@ -8,8 +8,20 @@ export interface packagesDataTypes {
 
 export interface infoCardTypes {
     title: string,
-    body: string;
-    background: string;
-    color: string;
-    icon: JSX.Element;
+    body: string,
+    background: string,
+    color: string,
+    icon: JSX.Element,
+}
+
+export interface packagesDisplayTypes {
+    name: string,
+    location: string,
+    inclusions: string[],
+    price: number,
+    images: string[],
+    packsize: {
+        min: number,
+        max: number,
+    },
 }

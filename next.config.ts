@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "unpkg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.vacationhive.com",
       }
     ]
   }

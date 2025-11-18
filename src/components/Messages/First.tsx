@@ -35,17 +35,17 @@ export default function First() {
     },
   ];
   return (
-    <div className="w-full bg-gray-100 py-20 px-6 text-center flex flex-col text-[#3C3D37] gap-8">
+    <div className="w-full bg-gray-100 py-10 pb-15 px-6 text-center flex flex-col text-[#3C3D37] gap-8">
       <div>
-        <p className="text-3xl md:text-4xl font-bold mb-4 text-[#3C3D37]">
+        <p className="text-2xl md:text-4xl font-bold mb-4 text-[#3C3D37]">
           Discover Eastern Visayas Like Never Before
         </p>
-        <p className="text-base md:text-lg text-[#3C3D37]">
+        <p className="text-[13px] md:text-lg text-[#3C3D37]">
           Explore breathtaking destinations, book guided tours, and experience
           the culture of the region — all in one smart platform.
         </p>
       </div>
-      <div className="flex w-full px-[100px] justify-around">
+      <div className="flex w-full px-[100px] justify-around min-h-[150px]">
         {informations.map((info, index) => (
           <InfoCards key={index} info={info} />
         ))}
