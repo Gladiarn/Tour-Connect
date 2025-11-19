@@ -9,8 +9,8 @@ export default function PackageCard({
 }) {
   return (
     <div className="w-full flex flex-col sm:flex-row sm:gap-[30px]">
-      <div className="sm:max-w-[500px] flex-1 h-[350px] flex flex-col gap-2 sm:order-1 order-2 rounded-md overflow-hidden">
-        <div className="relative w-full h-[175px]">
+      <div className="sm:max-w-[500px] flex-1 h-[250px] sm:h-[350px] flex flex-col gap-2 sm:order-1 order-2 rounded-md overflow-hidden">
+        <div className="relative w-full h-[125px] sm:h-[175px]">
           <Image
             src={packages.images[0]}
             fill
@@ -19,7 +19,7 @@ export default function PackageCard({
             alt={packages.name}
           />
         </div>
-        <div className="flex gap-2 w-full h-[175px]">
+        <div className="flex gap-2 w-full h-[125px] sm:h-[175px]">
           {packages.images.slice(1, 3).map((img, index) => (
             <div className="relative w-1/2 h-full" key={index}>
               <Image
@@ -34,7 +34,7 @@ export default function PackageCard({
         </div>
       </div>
 
-      <div className="text-black sm:order-2 order-1 flex-1 w-full flex flex-col justify-between p-[20px] sm:mt-0">
+      <div className="text-[#3C3D37] sm:order-2 order-1 flex-1 w-full flex flex-col justify-between p-[20px] sm:mt-0">
         <div className="flex gap-[15px] flex-col">
           <p className="text-[20px] font-semibold">{packages.name}</p>
           <div className="flex flex-col gap-1">
