@@ -11,10 +11,22 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "www.vacationhive.com",
-      }
-    ]
-  }
+        hostname: "images.pexels.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.goodfreephotos.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media.istockphoto.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
