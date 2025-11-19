@@ -11,6 +11,7 @@ import {
 import { packagesDataTypes, packagesDisplayTypes } from "../types";
 import { Calendar as CalendarIcon } from "lucide-react";
 import PackageCard from "./PackageCard";
+import Pagination from "../Pagination/Pagination";
 
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -67,9 +68,22 @@ const data = [
 ];
 
 export default function Packages() {
-  const [packagesDisplay, setPackagesDisplay] = useState<
-    packagesDisplayTypes[]
-  >([]);
+  const [paginated, setPaginated] = useState<packagesDisplayTypes[]>([]);
+  const itemsPerPage = 2;
+  const [inputValue, setInputValue] = useState<string>("1");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const handlePagination = (page: number) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setPaginated(data.slice(startIndex, endIndex));
+    setCurrentPage(page);
+    setInputValue(page.toString());
+  };
+  useEffect(() => {
+    handlePagination(1);
+  }, []);
 
   const tourTypesData: string[] = ["Beach", "Hiking", "Cultural", "Adventure"];
   const [date, setDate] = useState<DateRange | undefined>(undefined);
@@ -90,10 +104,6 @@ export default function Packages() {
       }));
     }
   }, [date]);
-
-  useEffect(() => {
-    setPackagesDisplay(data);
-  }, []);
 
   const [packagesData, setPackagesData] = useState<packagesDataTypes>({
     tourType: "",
@@ -256,9 +266,17 @@ export default function Packages() {
 
       {/* Cards Section */}
       <div className="w-full h-fit p-[30px] flex flex-col gap-[40px] items-center 2xl:px-[300px]">
-        {packagesDisplay?.map((packages, index) => (
+        {paginated?.map((packages, index) => (
           <PackageCard key={index} packages={packages} />
         ))}
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePagination={handlePagination}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+        />
       </div>
     </div>
   );
