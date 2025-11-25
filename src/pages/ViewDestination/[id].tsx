@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
-import { destinationsDisplayTypes } from "@/components/types";
+import { destinationsDisplayTypes, hotelsTypes } from "@/components/types";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Image from "next/image";
+import Pagination from "@/components/Pagination/Pagination";
+import HotelCard from "@/components/Card/HotelCard";
 
 const data = [
   {
@@ -77,6 +79,141 @@ const data = [
   },
 ];
 
+const hotels = [
+  {
+    name: "Ocean Breeze Resort",
+    images: [
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+    ],
+    duration: "20 minutes by boat",
+    rooms: [
+      {
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },
+    ],
+    rating: 1.6,
+  },
+  {
+    name: "Ocean Breeze Resort",
+    images: [
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+    ],
+    duration: "20 minutes by boat",
+    rooms: [
+      {
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },
+    ],
+    rating: 1.6,
+  },
+  {
+    name: "Ocean Breeze Resort",
+    images: [
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+    ],
+    duration: "20 minutes by boat",
+    rooms: [
+      {
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },
+    ],
+    rating: 1.6,
+  },
+  {
+    name: "Ocean Breeze Resort",
+    images: [
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+    ],
+    duration: "20 minutes by boat",
+    rooms: [
+      {
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },
+    ],
+    rating: 1.6,
+  },
+];
+
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const id = params?.id;
 
@@ -98,6 +235,25 @@ export default function ViewDestination({
 }: {
   destination: destinationsDisplayTypes;
 }) {
+  const [paginated, setPaginated] = useState<hotelsTypes[]>([]);
+  const itemsPerPage = 3;
+  const [inputValue, setInputValue] = useState<string>("1");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const totalPages = Math.ceil(hotels.length / itemsPerPage);
+
+  const handlePagination = (page: number) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setPaginated(hotels.slice(startIndex, endIndex));
+    setCurrentPage(page);
+    setInputValue(page.toString());
+  };
+
+  useEffect(() => {
+    handlePagination(1);
+  }, []);
+  
   return (
     <div className="w-full bg-white pt-[50px] flex flex-col">
       {/* Head */}
@@ -152,19 +308,44 @@ export default function ViewDestination({
           </div>
         </div>
         <div className="bg-[#EEEEEE] rounded-md px-[15px] p-[10px]">
-          <p className="text-[17px] font-semibold">Things to know before you go</p>
+          <p className="text-[17px] font-semibold">
+            Things to know before you go
+          </p>
           <ul className="list-disc list-inside space-y-1">
-            {
-              destination.tips.map((tip, index)=>(
-                <li key={index} className="text-[15px]">{tip}</li>
-              ))
-            }
+            {destination.tips.map((tip, index) => (
+              <li key={index} className="text-[15px]">
+                {tip}
+              </li>
+            ))}
           </ul>
         </div>
 
-        <div>
-          <p className="font-semibold text-[17px] p-[30px]">Hotels near {destination.name}</p>
-          
+        <div className="w-full h-fit p-[30px] flex flex-col gap-[40px] items-center 2xl:px-[150px]">
+          <div className="w-full flex justify-start">
+            <p className="font-semibold text-[17px] p-[30px]">
+              Hotels near {destination.name}
+            </p>
+          </div>
+
+          <div
+            key={currentPage}
+            className="grid gap-7 max-w-[1450px] w-full
+    grid-cols-1 
+    md:grid-cols-2
+    xl:grid-cols-3
+    mx-auto justify-items-center"
+          >
+            {paginated.map((info, index) => (
+              <HotelCard key={index} info={info} />
+            ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePagination={handlePagination}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+          />
         </div>
       </div>
     </div>
