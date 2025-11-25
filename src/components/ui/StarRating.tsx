@@ -11,13 +11,13 @@ export default function StarRating({
   clickable: boolean;
   className?: string;
   value: number;
-  reference: string;
+  reference?: string;
   currentRating?: number;
 }) {
   const { changeRating } = useRatings();
 
   const handleClick = () => {
-    if (clickable) {
+    if (clickable && reference) {
       console.log("Clicked star with value:", value);
       changeRating(reference, value);
     }

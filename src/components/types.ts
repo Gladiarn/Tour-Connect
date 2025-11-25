@@ -71,3 +71,18 @@ export interface popularDestinationsDisplayTypes {
   tips: string[];
   reference: string;
 }
+
+export interface hotelsTypes {
+  name: string;
+  images: string[];
+  duration: string;
+  rooms: {
+    image: string;
+    name: string;
+    features: string[];
+    facilities: string[];
+    description: string;
+    price: number;
+  }[];
+  rating: number;
+}
