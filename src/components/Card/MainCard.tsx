@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { destinationsDisplayTypes } from "../types";
 import StarRating from "../ui/StarRating";
+import Link from "next/link";
 
 export default function MainCard({ info }: { info: destinationsDisplayTypes }) {
   return (
@@ -23,10 +24,25 @@ export default function MainCard({ info }: { info: destinationsDisplayTypes }) {
           <p className="text-[13px] text-gray-400">{info.location}</p>
         </div>
 
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <StarRating clickable={true} value={star} key={star} reference={info.reference} currentRating={info.rating}/>
-          ))}
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <StarRating
+                clickable={false}
+                value={star}
+                key={star}
+                reference={info.reference}
+                currentRating={info.rating}
+              />
+            ))}
+          </div>
+
+          <Link
+            href={`/ViewDestination/${info.id}`}
+            className="px-4 py-2 text-white border border-white rounded-sm bg-[#3C3D37] hover:bg-white hover:text-[#3C3D37] hover:border-[#3C3D37] cursor-pointer transition-colors ease-in-out duration-200"
+          >
+            View More
+          </Link>
         </div>
       </div>
     </div>

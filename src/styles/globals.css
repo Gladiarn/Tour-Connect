@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.swiper-slide-custom {
+  width: 500px;     /* base */
+  max-width: 500px; /* do not exceed 500px */
+  min-width: 250px; /* minimum size before reducing slides-per-view */
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

@@ -33,6 +33,7 @@ export interface destinationsDataTypes {
 }
 
 export interface destinationsDisplayTypes {
+  id: number;
   name: string;
   activityType: string;
   rating: number;
@@ -55,4 +56,18 @@ export interface ratingsContextTypes {
   setRatings: React.Dispatch<React.SetStateAction<ratingsTypes[]>>;
   addRating: (rating: ratingsTypes) => void;
   changeRating: (ratingReference: string, newRating: number) => void;
+}
+
+export interface popularDestinationsDisplayTypes {
+  id: number;
+  name: string;
+  activityType: string;
+  rating: number;
+  images: string[];
+  description: string;
+  budget: number;
+  location: string;
+  bestTimeToVisit: string;
+  tips: string[];
+  reference: string;
 }
