@@ -12,9 +12,10 @@ import MainCard from "../Card/MainCard";
 
 const data = [
   {
+    id:1,
     name: "Kalanggaman Island",
     activityType: "Island",
-    rating: 3.4,
+    rating: 3.2,
     images: [
       "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
       "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
@@ -34,9 +35,10 @@ const data = [
     reference: "ABC-123",
   },
   {
+    id:2,
     name: "Kalanggaman Island",
     activityType: "Island",
-    rating: 4.5,
+    rating: 3.3,
     images: [
       "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
       "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
@@ -56,6 +58,7 @@ const data = [
     reference: "ABC-123",
   },
   {
+    id:3,
     name: "Kalanggaman Island",
     activityType: "Island",
     rating: 4.8,
@@ -136,7 +139,7 @@ export default function Destinations() {
       <div
         className="w-full flex items-center justify-center h-fit gap-[20px] lg:gap-[30px] p-[30px] py-[50px] pt-[130px]"
         style={{
-          backgroundImage: "url('/images/packages.avif')",
+          backgroundImage: "url('/images/des.png')",
           backgroundSize: "cover",
           backgroundPosition: "30% 59%",
           backgroundRepeat: "no-repeat",

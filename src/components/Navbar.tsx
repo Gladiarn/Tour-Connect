@@ -9,7 +9,12 @@ import {
 import { useSection } from "@/context/SectionContext";
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [language, setLanguage] = useState("English");
   const { setActiveSection } = useSection();
   return (
@@ -98,38 +103,40 @@ export default function Navbar() {
         </div>
 
         <div className="flex lg:hidden">
-          <Menu className="text-black"/>
+          <Menu className="text-black" />
         </div>
       </div>
 
-      <div className="w-full py-[5px] bg-white text-[#3C3D37]">
-        <div className="flex gap-[10px] justify-center items-center text-[14px] lg:text-[16px] ">
-          <p
-            onClick={() => {
-              setActiveSection("popular");
-            }}
-            className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
-          >
-            Popular Destinations
-          </p>
-          <p
-            onClick={() => {
-              setActiveSection("destinations");
-            }}
-            className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
-          >
-            Destinations
-          </p>
-          <p
-            onClick={() => {
-              setActiveSection("packages");
-            }}
-            className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
-          >
-            Packages
-          </p>
+      {isHome && (
+        <div className="w-full py-[5px] bg-white text-[#3C3D37]">
+          <div className="flex gap-[10px] justify-center items-center text-[14px] lg:text-[16px] ">
+            <p
+              onClick={() => {
+                setActiveSection("popular");
+              }}
+              className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+            >
+              Popular Destinations
+            </p>
+            <p
+              onClick={() => {
+                setActiveSection("destinations");
+              }}
+              className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+            >
+              Destinations
+            </p>
+            <p
+              onClick={() => {
+                setActiveSection("packages");
+              }}
+              className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+            >
+              Packages
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
