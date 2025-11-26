@@ -16,8 +16,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
+import Link from "next/link";
 
-export default function HotelCard({ info }: { info: hotelsTypes }) {
+export default function HotelCard({ info}: { info: hotelsTypes }) {
   return (
     <div className="flex flex-col w-full overflow-hidden rounded-md">
       <div className="relative overflow-hidden aspect-[16/7] sm:h-[200px] rounded-b-none">
@@ -128,16 +129,23 @@ export default function HotelCard({ info }: { info: hotelsTypes }) {
                               className="object-cover"
                             />
                           </div>
-                          <div className="p-1">
+                          <div className="p-1 flex flex-col">
                             <p className="font-semibold">{room.name}</p>
                             <ul className="list-disc list-inside space-y-1 p-2">
-                              {room.features.slice(0,3).map((feature, index) => (
-                                <li key={index} className="text-[15px]">
-                                  {feature}
-                                </li>
-                              ))}
+                              {room.features
+                                .slice(0, 3)
+                                .map((feature, index) => (
+                                  <li key={index} className="text-[15px]">
+                                    {feature}
+                                  </li>
+                                ))}
                             </ul>
-                            <button className="text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200">View Room</button>
+                            <Link
+                              href={`${info.id}/ViewRoom/${room.id}`}
+                              className="text-center text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200"
+                            >
+                              View Room
+                            </Link>
                           </div>
                         </SwiperSlide>
                       ))}
