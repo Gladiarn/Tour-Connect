@@ -85,11 +85,73 @@ const hotels = [
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=","https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
     ],
     duration: "20 minutes by boat",
     rooms: [
       {
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },{
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },{
+        image:
+          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
+        name: "Deluxe Sea View Room",
+        features: [
+          "1 King-size bed",
+          "Free breakfast",
+          "Private balcony",
+          "Air conditioning",
+        ],
+        facilities: [
+          "Swimming pool",
+          "Free WiFi",
+          "Gym access",
+          "Beachfront",
+          "Restaurant",
+        ],
+        description:
+          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
+        price: 4500,
+      },{
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -253,7 +315,7 @@ export default function ViewDestination({
   useEffect(() => {
     handlePagination(1);
   }, []);
-  
+
   return (
     <div className="w-full bg-white pt-[50px] flex flex-col">
       {/* Head */}
