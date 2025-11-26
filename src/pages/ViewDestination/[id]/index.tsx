@@ -81,17 +81,20 @@ const data = [
 
 const hotels = [
   {
+    id: 1,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=","https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
+      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
     ],
     duration: "20 minutes by boat",
     rooms: [
       {
+        id: 1,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -111,7 +114,9 @@ const hotels = [
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
-      },{
+      },
+      {
+        id: 2,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -131,7 +136,9 @@ const hotels = [
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
-      },{
+      },
+      {
+        id: 3,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -151,7 +158,9 @@ const hotels = [
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
-      },{
+      },
+      {
+        id: 4,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -176,6 +185,7 @@ const hotels = [
     rating: 1.6,
   },
   {
+        id: 2,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -185,6 +195,7 @@ const hotels = [
     duration: "20 minutes by boat",
     rooms: [
       {
+        id: 5,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -209,6 +220,7 @@ const hotels = [
     rating: 1.6,
   },
   {
+        id: 3,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -218,6 +230,7 @@ const hotels = [
     duration: "20 minutes by boat",
     rooms: [
       {
+        id: 6,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -242,6 +255,7 @@ const hotels = [
     rating: 1.6,
   },
   {
+    id:4,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -251,6 +265,7 @@ const hotels = [
     duration: "20 minutes by boat",
     rooms: [
       {
+        id: 7,
         image:
           "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
         name: "Deluxe Sea View Room",
@@ -288,13 +303,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       destination,
+
     },
   };
 };
 
 export default function ViewDestination({
   destination,
+
 }: {
+
   destination: destinationsDisplayTypes;
 }) {
   const [paginated, setPaginated] = useState<hotelsTypes[]>([]);
@@ -360,10 +378,10 @@ export default function ViewDestination({
               <p className="text-[15px]">{destination.budget}</p>
             </div>
             <div className="flex gap-4 p-[10px]">
-              <button className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap">
+              <button className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer">
                 Favorite
               </button>
-              <button className="px-4 py-2 rounded-md bg-[#3C3D37] text-white text-nowrap">
+              <button className="px-4 py-2 rounded-md bg-[#3C3D37] text-white text-nowrap cursor-pointer">
                 Book Now
               </button>
             </div>
@@ -398,7 +416,7 @@ export default function ViewDestination({
     mx-auto justify-items-center"
           >
             {paginated.map((info, index) => (
-              <HotelCard key={index} info={info} />
+              <HotelCard key={index} info={info}/>
             ))}
           </div>
           <Pagination

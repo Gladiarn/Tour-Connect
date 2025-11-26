@@ -73,10 +73,12 @@ export interface popularDestinationsDisplayTypes {
 }
 
 export interface hotelsTypes {
+  id: number;
   name: string;
   images: string[];
   duration: string;
   rooms: {
+    id: number;
     image: string;
     name: string;
     features: string[];
@@ -85,4 +87,11 @@ export interface hotelsTypes {
     price: number;
   }[];
   rating: number;
+}
+
+export type CombinedDestination = popularDestinationsDisplayTypes & hotelsTypes;
+
+export interface ViewRoomPageProps {
+  destination: CombinedDestination;
+  room: hotelsTypes;
 }
