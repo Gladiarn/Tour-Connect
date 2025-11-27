@@ -111,6 +111,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -133,6 +135,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -155,6 +159,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -177,6 +183,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -185,7 +193,7 @@ const hotels = [
     rating: 1.6,
   },
   {
-        id: 2,
+    id: 2,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -212,6 +220,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -220,7 +230,7 @@ const hotels = [
     rating: 1.6,
   },
   {
-        id: 3,
+    id: 3,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -240,6 +250,8 @@ const hotels = [
           "Private balcony",
           "Air conditioning",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         facilities: [
           "Swimming pool",
           "Free WiFi",
@@ -255,7 +267,7 @@ const hotels = [
     rating: 1.6,
   },
   {
-    id:4,
+    id: 4,
     name: "Ocean Breeze Resort",
     images: [
       "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
@@ -282,6 +294,8 @@ const hotels = [
           "Beachfront",
           "Restaurant",
         ],
+        guests: ["2 adults", "2 children"],
+        area: "250 sq. ft.",
         description:
           "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
         price: 4500,
@@ -303,16 +317,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       destination,
-
     },
   };
 };
 
 export default function ViewDestination({
   destination,
-
 }: {
-
   destination: destinationsDisplayTypes;
 }) {
   const [paginated, setPaginated] = useState<hotelsTypes[]>([]);
@@ -416,7 +427,7 @@ export default function ViewDestination({
     mx-auto justify-items-center"
           >
             {paginated.map((info, index) => (
-              <HotelCard key={index} info={info}/>
+              <HotelCard key={index} info={info} />
             ))}
           </div>
           <Pagination
