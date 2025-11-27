@@ -121,6 +121,8 @@ export default function Packages() {
     }));
   };
 
+  
+
   return (
     <div className="flex flex-col w-full h-fit bg-white">
       <div
@@ -260,6 +262,7 @@ export default function Packages() {
                 </PopoverContent>
               </Popover>
             </div>
+            <button onClick={()=>console.log(packagesData)}>test</button>
           </div>
         </div>
       </div>

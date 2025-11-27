@@ -85,6 +85,8 @@ export interface hotelsTypes {
     facilities: string[];
     description: string;
     price: number;
+    guests: string[];
+    area: string;
   }[];
   rating: number;
 }
@@ -93,5 +95,26 @@ export type CombinedDestination = popularDestinationsDisplayTypes & hotelsTypes;
 
 export interface ViewRoomPageProps {
   destination: CombinedDestination;
-  room: hotelsTypes;
+  room: {
+    id: number;
+    image: string;
+    name: string;
+    features: string[];
+    facilities: string[];
+    description: string;
+    price: number;
+    guests: string[];
+    area: string;
+  };
+}
+
+export interface bookRoomTypes {
+  hotelId: number;
+  roomId: number;
+  name: string;
+  phoneNumber: string;
+  address: string;
+  dateRange: { startDate: Date | undefined; endDate: Date | undefined };
+  nightCount: number;
+  totalPrice: number;
 }
