@@ -324,7 +324,7 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
 
   return (
     <div className=" w-full text-[#3C3D37] bg-[#EEEEEE] py-[90px] px-[30px] md:px-[80px] flex flex-col gap-5 justify-center items-center">
-      <div className="w-fit flex flex-col">
+      <div className="w-fit flex flex-col gap-10">
         {/* upper part */}
         <div className="flex gap-10 xl:flex-row flex-col">
           <div className="bg-[#FFFFFF] p-[15px] rounded-md flex flex-col gap-1 shadow-[0px_4px_14px_1px_rgba(0,_0,_0,_0.1)] w-full md:w-fit">
@@ -487,7 +487,12 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
           )}
         </div>
         {/* lower part */}
-        <div></div>
+        <div className="w-full flex flex-col gap-2">
+          <p className="font-semibold">Description</p>
+          <div className="w-full bg-[#FFFFFF] p-[15px] rounded-md">
+            {room.description}
+          </div>
+        </div>
       </div>
     </div>
   );

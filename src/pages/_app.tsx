@@ -6,6 +6,7 @@ import { Poppins } from "next/font/google";
 import "../styles/globals.css";
 import { SectionProvider } from "@/context/SectionContext";
 import { RatingsProvider } from "@/lib/contexts/RatingsContext";
+import { AuthProvider } from "@/context/AuthContext";
 const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
@@ -21,13 +22,15 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <div className={`${poppins.variable} font-sans`}>
-      <SectionProvider>
-        <RatingsProvider>
-        <Layout hideNavbar={hideNavbar}>
-          <Component {...pageProps} />
-        </Layout>
-        </RatingsProvider>
-      </SectionProvider>
+      <AuthProvider>
+        <SectionProvider>
+          <RatingsProvider>
+            <Layout hideNavbar={hideNavbar}>
+              <Component {...pageProps} />
+            </Layout>
+          </RatingsProvider>
+        </SectionProvider>
+      </AuthProvider>
     </div>
   );
 }
