@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 // import { DatePickerRange } from "../ui/DatePickerRange";
 import {
@@ -10,95 +10,44 @@ import { destinationsDataTypes, destinationsDisplayTypes } from "../types";
 import Pagination from "../Pagination/Pagination";
 import MainCard from "../Card/MainCard";
 
-const data = [
-  {
-    id:1,
-    name: "Kalanggaman Island",
-    activityType: "Island",
-    rating: 3.2,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    description:
-      "Experience the pristine white sandbar and crystal-clear turquoise waters of Kalanggaman Island, a paradise perfect for swimming, snorkeling, and beach camping.",
-    budget: 12500,
-    location: "Palompon, Leyte",
-    bestTimeToVisit: "March to June",
-    tips: [
-      "Book tours in advance during peak season",
-      "Bring waterproof bags for your belongings",
-      "Apply reef-safe sunscreen to protect marine life",
-      "Pack enough water and snacks",
-    ],
-    reference: "ABC-123",
-  },
-  {
-    id:2,
-    name: "Kalanggaman Island",
-    activityType: "Island",
-    rating: 3.3,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    description:
-      "Experience the pristine white sandbar and crystal-clear turquoise waters of Kalanggaman Island, a paradise perfect for swimming, snorkeling, and beach camping.",
-    budget: 12500,
-    location: "Palompon, Leyte",
-    bestTimeToVisit: "March to June",
-    tips: [
-      "Book tours in advance during peak season",
-      "Bring waterproof bags for your belongings",
-      "Apply reef-safe sunscreen to protect marine life",
-      "Pack enough water and snacks",
-    ],
-    reference: "ABC-123",
-  },
-  {
-    id:3,
-    name: "Kalanggaman Island",
-    activityType: "Island",
-    rating: 4.8,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    description:
-      "Experience the pristine white sandbar and crystal-clear turquoise waters of Kalanggaman Island, a paradise perfect for swimming, snorkeling, and beach camping.",
-    budget: 12500,
-    location: "Palompon, Leyte",
-    bestTimeToVisit: "March to June",
-    tips: [
-      "Book tours in advance during peak season",
-      "Bring waterproof bags for your belongings",
-      "Apply reef-safe sunscreen to protect marine life",
-      "Pack enough water and snacks",
-    ],
-    reference: "ABC-123",
-  },
-];
-
 export default function Destinations() {
+  const [data, setData] = useState<destinationsDisplayTypes[]>([]);
   const [paginated, setPaginated] = useState<destinationsDisplayTypes[]>([]);
   const itemsPerPage = 3;
   const [inputValue, setInputValue] = useState<string>("1");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(data?.length / itemsPerPage);
 
-  const handlePagination = (page: number) => {
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setPaginated(data.slice(startIndex, endIndex));
-    setCurrentPage(page);
-    setInputValue(page.toString());
-  };
+   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/destination/all");
+        const result = await res.json();
+        setData(result);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setData([]);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+
+  const handlePagination = useCallback(
+    (page: number) => {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      setPaginated(data?.slice(startIndex, endIndex));
+      setCurrentPage(page);
+      setInputValue(page.toString());
+    },
+    [data]
+  );
+
   useEffect(() => {
     handlePagination(1);
-  }, []);
+  }, [handlePagination]);
 
   const activityTypeData: string[] = [
     "Swimming",
@@ -283,7 +232,7 @@ export default function Destinations() {
     xl:grid-cols-3
     mx-auto justify-items-center"
         >
-          {paginated.map((info, index) => (
+          {paginated && paginated.map((info, index) => (
             <MainCard info={info} key={index} />
           ))}
         </div>

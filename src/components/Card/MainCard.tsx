@@ -38,7 +38,7 @@ export default function MainCard({ info }: { info: destinationsDisplayTypes }) {
           </div>
 
           <Link
-            href={`/ViewDestination/${info.id}`}
+            href={`/ViewDestination/${info.reference}`}
             className="px-4 py-2 text-white border border-white rounded-sm bg-[#3C3D37] hover:bg-white hover:text-[#3C3D37] hover:border-[#3C3D37] cursor-pointer transition-colors ease-in-out duration-200"
           >
             View More

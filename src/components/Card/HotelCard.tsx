@@ -141,7 +141,7 @@ export default function HotelCard({ info}: { info: hotelsTypes }) {
                                 ))}
                             </ul>
                             <Link
-                              href={`${info.id}/ViewRoom/${room.id}`}
+                              href={`${info.reference}/ViewRoom/${room.roomReference}`}
                               className="text-center text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200"
                             >
                               View Room

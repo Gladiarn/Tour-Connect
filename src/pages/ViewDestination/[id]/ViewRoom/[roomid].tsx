@@ -1,5 +1,4 @@
-import { bookRoomTypes, ViewRoomPageProps } from "@/components/types";
-import { GetServerSideProps } from "next";
+import { bookRoomTypes, hotelsTypes, roomPageTypes } from "@/components/types";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -11,265 +10,21 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import SmallCard from "@/components/Card/SmallCard";
+import { useRouter } from "next/router";
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
   day: "2-digit",
 };
 
-const hotels = [
-  {
-    id: 1,
-    name: "Ocean Breeze Resort",
-    images: [
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-    ],
-    duration: "20 minutes by boat",
-    rooms: [
-      {
-        id: 1,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-      {
-        id: 2,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-      {
-        id: 3,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-      {
-        id: 4,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-    ],
-    rating: 1.6,
-  },
-  {
-    id: 2,
-    name: "Ocean Breeze Resort",
-    images: [
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-    ],
-    duration: "20 minutes by boat",
-    rooms: [
-      {
-        id: 5,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-    ],
-    rating: 1.6,
-  },
-  {
-    id: 3,
-    name: "Ocean Breeze Resort",
-    images: [
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-    ],
-    duration: "20 minutes by boat",
-    rooms: [
-      {
-        id: 6,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-    ],
-    rating: 1.6,
-  },
-  {
-    id: 4,
-    name: "Ocean Breeze Resort",
-    images: [
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-      "https://media.istockphoto.com/id/1390168364/photo/pristine-and-turquoise-blue-green-beach-under-blue-sky-portuguese-island-in-maputo-mozambique.webp?a=1&b=1&s=612x612&w=0&k=20&c=BuIhVQEMx9SrmO1iv9Dmw9wMxtBhgx2UgCKGp6K1Bnc=",
-    ],
-    duration: "20 minutes by boat",
-    rooms: [
-      {
-        id: 7,
-        image:
-          "https://media.istockphoto.com/id/1199804796/photo/portrait-of-tourist-woman-raised-her-hands-and-standing-nearly-window-looking-to-beautiful.webp?a=1&b=1&s=612x612&w=0&k=20&c=mSGn9G9SW4_mphJ1xKU_ad-xbLadiDpMH4vjTrpMldY=",
-        name: "Deluxe Sea View Room",
-        features: [
-          "1 King-size bed",
-          "Free breakfast",
-          "Private balcony",
-          "Air conditioning",
-        ],
-        facilities: [
-          "Swimming pool",
-          "Free WiFi",
-          "Gym access",
-          "Beachfront",
-          "Restaurant",
-        ],
-        guests: ["2 adults", "2 children"],
-        area: "250 sq. ft.",
-        description:
-          "A spacious room with a panoramic view of the ocean, perfect for couples or solo travelers seeking comfort and relaxation.",
-        price: 4500,
-      },
-    ],
-    rating: 1.6,
-  },
-];
+export default function ViewRoomPage() {
+  const router = useRouter();
+  const { id, roomid } = router.query;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { id, roomid } = params as {
-    id: string;
-    roomid: string;
-  };
-  const hotel = hotels.find((h) => h.id === Number(id));
-
-  if (!hotel) {
-    return { notFound: true };
-  }
-
-  const room = hotel.rooms.find((r) => r.id === Number(roomid));
-
-  if (!room) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      destination: hotel,
-      room: room,
-    },
-  };
-};
-
-export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
   const [date, setDate] = useState<DateRange | undefined>(undefined);
+  const [hotel, setHotel] = useState<hotelsTypes | null>(null);
+  const [room, setRoom] = useState<roomPageTypes | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState<bookRoomTypes>({
     name: "",
@@ -281,12 +36,38 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
     },
     nightCount: 0,
     totalPrice: 0,
-    roomId: room.id,
-    hotelId: destination.id,
+    roomReference: String(roomid) || "",
+    hotelReference: String(id) || "",
   });
 
+useEffect(() => {
+  
+  const fetchRoomData = async () => {
+    if (!id || !roomid) {
+      console.log('❌ Missing parameters');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:5000/api/hotels/${id}/${roomid}`
+      );
+      const data = await res.json();
+      setHotel(data.hotel);
+      setRoom(data.room);
+    } catch (error) {
+      console.error("❌ Error fetching room data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRoomData();
+}, [id, roomid]);
+
   useEffect(() => {
-    if (date?.from && date?.to) {
+    if (date?.from && date?.to && room) {
       // Calculate night count
       const timeDifference = date.to.getTime() - date.from.getTime();
       const nightCount = Math.ceil(timeDifference / (1000 * 3600 * 24));
@@ -308,7 +89,7 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
         totalPrice: 0,
       }));
     }
-  }, [date, room.price]);
+  }, [date, room]);
 
   const dataSetter = <K extends keyof bookRoomTypes>(
     key: K,
@@ -322,6 +103,22 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
 
   const [bookNow, setBookNow] = useState<boolean>(false);
 
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        Loading room...
+      </div>
+    );
+  }
+
+  if (!room) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        Loading room...
+      </div>
+    );
+  }
+
   return (
     <div className=" w-full text-[#3C3D37] bg-[#EEEEEE] py-[90px] px-[30px] md:px-[80px] flex flex-col gap-5 justify-center items-center">
       <div className="w-fit flex flex-col gap-10">
@@ -331,9 +128,9 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
             <div className="relative aspect-[16/8] md:w-[500] md:h-[300px] lg:w-[800px] lg:h-[400px] overflow-hidden rounded-sm">
               <Image src={room.image} fill alt={"test"} />
             </div>
-            <p className="font-semibold">{room.name}</p>
+            <p className="font-semibold">{room.name} - {hotel?.name}</p>
             <p className="before:content-['₱'] after:content-['_per_night']">
-              {room.price.toLocaleString()}
+              {room.price?.toLocaleString() ?? "0"}
             </p>
           </div>
 
@@ -426,7 +223,7 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
                 <p>
                   Total Amount to Pay:{" "}
                   <b className="before:content-['₱'] font-semibold">
-                    {data.totalPrice.toLocaleString()}
+                    {data.totalPrice?.toLocaleString() ?? "0"}
                   </b>
                 </p>
               </div>
@@ -440,13 +237,13 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
           ) : (
             <div className="p-[15px] py-[20px] flex flex-col gap-5 bg-[#FFFFFF] rounded-md max-w-[450px] w-full min-w-[300px] h-fit">
               <p className="font-medium text-[17px] before:content-['₱']">
-                {room.price.toLocaleString()} per night
+                {room.price?.toLocaleString() ?? "0"} per night
               </p>
 
               <div className="w-full flex flex-col gap-2">
                 <p className="text-[15px] font-medium">Features</p>
                 <div className="w-full flex gap-2 flex-wrap">
-                  {room.features.map((feature, index) => (
+                  {room.features?.map((feature, index) => (
                     <SmallCard key={index} text={feature} />
                   ))}
                 </div>
@@ -455,7 +252,7 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
               <div className="w-full flex flex-col gap-2">
                 <p className="text-[15px] font-medium">Facilities</p>
                 <div className="w-full flex gap-2 flex-wrap">
-                  {room.facilities.map((facility, index) => (
+                  {room.facilities?.map((facility, index) => (
                     <SmallCard key={index} text={facility} />
                   ))}
                 </div>
@@ -464,7 +261,7 @@ export default function ViewRoomPage({ destination, room }: ViewRoomPageProps) {
               <div className="w-full flex flex-col gap-2">
                 <p className="text-[15px] font-medium">Guests</p>
                 <div className="w-full flex gap-2 flex-wrap">
-                  {room.guests.map((guest, index) => (
+                  {room.guests?.map((guest, index) => (
                     <SmallCard key={index} text={guest} />
                   ))}
                 </div>
