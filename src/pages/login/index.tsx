@@ -5,8 +5,11 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/router";
 
 export default function Index() {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registeremail, setRegisterEmail] = useState("");
@@ -49,6 +52,35 @@ export default function Index() {
     setisLogin(!isLogin);
   };
 
+  const { login } = useAuth();
+  const router = useRouter();
+  const loginHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw data;
+      }
+
+      login(data.accessToken, data.refreshToken);
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="min-h-[85vh] grid place-items-center bg-white text-[#3C3D37]">
@@ -68,7 +100,11 @@ export default function Index() {
                 </p>
               </div>
 
-              <form action="" className="flex flex-col gap-6 py-8">
+              <form
+                onSubmit={(e) => loginHandler(e)}
+                action=""
+                className="flex flex-col gap-6 py-8"
+              >
                 <div className="relative">
                   <input
                     type="email"
@@ -132,7 +168,7 @@ export default function Index() {
                   <Link
                     href={"#"}
                     className="text-[#8b5b00]"
-                    onClick={(e)=>toggleLogin(e)}
+                    onClick={(e) => toggleLogin(e)}
                   >
                     Sign up here
                   </Link>
@@ -164,10 +200,12 @@ export default function Index() {
                   <Image src={"/images/Icon.svg"} alt="Bus Icon" fill />{" "}
                 </div>
                 <h3 className="text-2xl font-semibold">
-                Join our community of fellow explorers in Eastern Visayas!
+                  Join our community of fellow explorers in Eastern Visayas!
                 </h3>
                 <p>
-                Become a member and plan your dream trip to the captivating Eastern Visayas region, where adventure and culture await. Sign up now!
+                  Become a member and plan your dream trip to the captivating
+                  Eastern Visayas region, where adventure and culture await.
+                  Sign up now!
                 </p>
               </div>
 

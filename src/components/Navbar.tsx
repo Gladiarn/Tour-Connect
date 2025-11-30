@@ -10,8 +10,10 @@ import { useSection } from "@/context/SectionContext";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -91,15 +93,24 @@ export default function Navbar() {
               <button className="flex bg-[#3c3d37] w-[30px] h-[30px] justify-center rounded-full gap-[10px] items-center">
                 <CiUser className="text-[#ffffff] h-[20px] w-[20px] rounded-full" />
               </button>
-              <p className="flex text-[#3C3D37]">Guest</p>
+              <p className="flex text-[#3C3D37]">
+                {user ? user.name : "Guest"}
+              </p>
             </div>
           </div>
-          <Link
-            href="/login"
-            className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
-          >
-            Log-In
-          </Link>
+
+          {user ? (
+            <button onClick={logout} className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
+              Log-Out
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
+            >
+              Log-In
+            </Link>
+          )}
         </div>
 
         <div className="flex lg:hidden">

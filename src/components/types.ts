@@ -77,6 +77,7 @@ export interface hotelsTypes {
   name: string;
   images: string[];
   duration: string;
+  reference: string;
   rooms: {
     id: number;
     image: string;
@@ -87,6 +88,7 @@ export interface hotelsTypes {
     price: number;
     guests: string[];
     area: string;
+    roomReference: string;
   }[];
   rating: number;
 }
@@ -108,9 +110,22 @@ export interface ViewRoomPageProps {
   };
 }
 
+export interface roomPageTypes {
+    id: number;
+    image: string;
+    name: string;
+    features: string[];
+    facilities: string[];
+    description: string;
+    price: number;
+    guests: string[];
+    area: string;
+    roomReference: string;
+}
+
 export interface bookRoomTypes {
-  hotelId: number;
-  roomId: number;
+  hotelReference: string;
+  roomReference: string;
   name: string;
   phoneNumber: string;
   address: string;
