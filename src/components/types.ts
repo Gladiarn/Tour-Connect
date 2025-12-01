@@ -37,7 +37,7 @@ export interface destinationsDataTypes {
 }
 
 export interface destinationsDisplayTypes {
-  id: number;
+  _id: number;
   name: string;
   activityType: string;
   rating: number;
@@ -63,7 +63,7 @@ export interface ratingsContextTypes {
 }
 
 export interface popularDestinationsDisplayTypes {
-  id: number;
+  _id: number;
   name: string;
   activityType: string;
   rating: number;
