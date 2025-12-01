@@ -28,6 +28,7 @@ export default function Home() {
     <div className="bg-white">
       <Landing />
       <First />
+      
     {
       sectionComponents[activeSection] || <div>Loading Component...</div>
     }

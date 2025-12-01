@@ -9,14 +9,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 
 export default function Index() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registeremail, setRegisterEmail] = useState("");
   const [registername, setRegisterName] = useState("");
   const [registerpassword, setRegisterPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
-
+  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
   function clearFields() {
     setEmail("");
     setPassword("");
@@ -75,7 +75,47 @@ export default function Index() {
       }
 
       login(data.accessToken, data.refreshToken);
-      router.push('/');
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const signUpHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = {
+      email: registeremail,
+      name: registername,
+      password: registerpassword,
+      userType: "user",
+    };
+    if (registerpassword.length < 6) {
+      setMessage("Password must be at least 6 characters long!");
+      return;
+    }
+    if (registerpassword !== confirmpassword) {
+      setMessage("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/users/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.status === 400) {
+        setMessage("User already exists!");
+      } else if (response.ok) {
+        setSuccess(true);
+        setMessage("Account created successfully!");
+        setRegisterEmail("");
+        setRegisterName("");
+        setRegisterPassword("");
+        setConfirmPassword("");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -162,7 +202,6 @@ export default function Index() {
                 <button className="w-full h-[50px] text-xl font-semibold text-white bg-[#3C3D37] border-none cursor-pointer hover:bg-[#697565] rounded-[10px]">
                   Continue
                 </button>
-
                 <p>
                   Don&apos;t have an account yet?{" "}
                   <Link
@@ -209,7 +248,11 @@ export default function Index() {
                 </p>
               </div>
 
-              <form action="" className="flex flex-col gap-6 py-8">
+              <form
+                onSubmit={(e) => signUpHandler(e)}
+                action=""
+                className="flex flex-col gap-6 py-8"
+              >
                 <div className="relative">
                   <input
                     type="email"
@@ -315,7 +358,7 @@ export default function Index() {
                 <button className="w-full h-[50px] text-xl font-semibold text-white bg-[#3C3D37] border-none cursor-pointer hover:bg-[#697565] rounded-[10px]">
                   Continue
                 </button>
-
+                <p className={`${success ? 'text-green-500' : 'text-red-500'} text-[12px] `}>{message}</p>
                 <p>
                   Already have an account?{" "}
                   <Link

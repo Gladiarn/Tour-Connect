@@ -6,8 +6,20 @@ import Image from "next/image";
 import Pagination from "@/components/Pagination/Pagination";
 import HotelCard from "@/components/Card/HotelCard";
 import { useRouter } from "next/router";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import DestinationModal from "@/components/Modal/DestinationModal";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function ViewDestination() {
+  const { user } = useAuth();
   const router = useRouter();
   const { id } = router.query;
   const [destination, setDestination] =
@@ -122,13 +134,34 @@ export default function ViewDestination() {
               <p className="font-semibold">Estimated budget</p>
               <p className="text-[15px]">{destination?.budget}</p>
             </div>
-            <div className="flex gap-4 p-[10px]">
-              <button className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer">
+            <div className="flex gap-5 p-[10px]">
+              <button className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer hover:bg-[#C3B40E]/70 ">
                 Favorite
               </button>
-              <button className="px-4 py-2 rounded-md bg-[#3C3D37] text-white text-nowrap cursor-pointer">
-                Book Now
-              </button>
+
+              <Dialog>
+                <DialogTrigger>
+                  {!user ? (
+                    <Link
+                      href="/login"
+                      className="text-nowrap text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200"
+                    >
+                      Book Now
+                    </Link>
+                  ) : (
+                    <p className="text-nowrap text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200">
+                      Book Now
+                    </p>
+                  )}
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle></DialogTitle>
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                  <DestinationModal destination={destination} />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>

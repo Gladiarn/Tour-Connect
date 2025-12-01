@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-// import { DatePickerRange } from "../ui/DatePickerRange";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,70 +18,51 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
   day: "2-digit",
 };
 
-const data = [
-  {
-    name: "Kalanggaman Island Tour",
-    location: "Palompon, Leyte",
-    inclusions: ["Boat Transfer", "Entrance Fee", "Lunch Buffet", "Tour Guide"],
-    price: 12500,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    packsize: {
-      min: 2,
-      max: 5,
-    },
-  },
-  {
-    name: "Kalanggaman Island Tour",
-    location: "Palompon, Leyte",
-    inclusions: ["Boat Transfer", "Entrance Fee", "Lunch Buffet", "Tour Guide"],
-    price: 12500,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    packsize: {
-      min: 2,
-      max: 5,
-    },
-  },
-  {
-    name: "Kalanggaman Island Tour",
-    location: "Palompon, Leyte",
-    inclusions: ["Boat Transfer", "Entrance Fee", "Lunch Buffet", "Tour Guide"],
-    price: 12500,
-    images: [
-      "https://media.istockphoto.com/id/1213315764/photo/kalanggaman-island-malapascua-the-philippines-aerial-photograph.webp?a=1&b=1&s=612x612&w=0&k=20&c=rxwJ8GHw7ja40Fjrjn4OBzA93Tt5dwMwc3s4zmSiG1o=",
-      "https://media.istockphoto.com/id/514741984/photo/tropical-beach-kalanggaman-island.webp?a=1&b=1&s=612x612&w=0&k=20&c=N37LRI4EY9pTIDa1A2HUUKbo8H67dRmYH3Fyo6YK1n0=",
-      "https://media.istockphoto.com/id/1203022831/photo/the-idyllic-kalanggaman-island-near-leyte-in-the-philippines.webp?a=1&b=1&s=612x612&w=0&k=20&c=7ZD7Y6YQfOL5ai5XEBi4gliAMndkqf3BOrGT49Mt47w=",
-    ],
-    packsize: {
-      min: 2,
-      max: 5,
-    },
-  },
-];
-
 export default function Packages() {
+  const [data, setData] = useState<packagesDisplayTypes[]>([]);
   const [paginated, setPaginated] = useState<packagesDisplayTypes[]>([]);
   const itemsPerPage = 2;
   const [inputValue, setInputValue] = useState<string>("1");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const handlePagination = (page: number) => {
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setPaginated(data.slice(startIndex, endIndex));
-    setCurrentPage(page);
-    setInputValue(page.toString());
-  };
+  const handlePagination = useCallback(
+    (page: number) => {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      setPaginated(data.slice(startIndex, endIndex));
+      setCurrentPage(page);
+      setInputValue(page.toString());
+    },
+    [data]
+  );
+
   useEffect(() => {
     handlePagination(1);
+  }, [handlePagination]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/packages/all");
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch packages: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          setData(data.data);
+        } else {
+          throw new Error(data.message || "Failed to fetch packages");
+        }
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    };
+
+    fetchPackages();
   }, []);
 
   const tourTypesData: string[] = ["Beach", "Hiking", "Cultural", "Adventure"];
@@ -120,8 +100,6 @@ export default function Packages() {
       [key]: value,
     }));
   };
-
-  
 
   return (
     <div className="flex flex-col w-full h-fit bg-white">
@@ -262,7 +240,7 @@ export default function Packages() {
                 </PopoverContent>
               </Popover>
             </div>
-            <button onClick={()=>console.log(packagesData)}>test</button>
+            <button onClick={() => console.log(packagesData)}>test</button>
           </div>
         </div>
       </div>

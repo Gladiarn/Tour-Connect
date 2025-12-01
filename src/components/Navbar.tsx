@@ -11,14 +11,51 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
   const [language, setLanguage] = useState("English");
   const { setActiveSection } = useSection();
+
+  const handleLogout = async () => {
+    try {
+    const refreshToken = localStorage.getItem('refreshToken');
+    
+    if (refreshToken) {
+      const response = await fetch("http://localhost:5000/api/users/logout", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        console.warn("Backend logout failed, but clearing frontend anyway");
+      }
+
+      await logout();
+    }
+    
+  } catch (error) {
+    console.error("Logout error:", error);
+
+  }
+  }
+
+  const handleProfile = () => {
+    if (!user){
+      router.push('/login');
+      return;
+    }
+    router.push('/Profile');
+    return;
+  }
   return (
     <div className="flex flex-col w-full h-fit fixed top-0 left-0 z-50">
       {/* Menu container */}
@@ -32,7 +69,7 @@ export default function Navbar() {
             <p className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
               Home
             </p>
-            <p className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
+            <p onClick={handleProfile} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
               My Bookings
             </p>
             <p className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
@@ -100,7 +137,7 @@ export default function Navbar() {
           </div>
 
           {user ? (
-            <button onClick={logout} className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
+            <button onClick={handleLogout} className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
               Log-Out
             </button>
           ) : (

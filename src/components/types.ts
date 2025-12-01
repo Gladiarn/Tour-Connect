@@ -18,12 +18,16 @@ export interface packagesDisplayTypes {
   name: string;
   location: string;
   inclusions: string[];
+  pricePerHead: number;
+  duration: string;
+  description: string;
   price: number;
   images: string[];
   packsize: {
     min: number;
     max: number;
   };
+  reference: string;
 }
 
 export interface destinationsDataTypes {
@@ -132,4 +136,16 @@ export interface bookRoomTypes {
   dateRange: { startDate: Date | undefined; endDate: Date | undefined };
   nightCount: number;
   totalPrice: number;
+}
+
+export interface Booking {
+  _id: string;
+  destinationReference: string;
+  tourType: string;
+  transportation: string[];
+  image: string;
+  dateBooked: string;
+  dateStart: string;
+  totalPrice: number;
+  status: "upcoming" | "ongoing" | "completed" | "cancelled";
 }
