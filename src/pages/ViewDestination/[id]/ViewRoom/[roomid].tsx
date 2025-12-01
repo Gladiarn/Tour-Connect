@@ -11,6 +11,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import SmallCard from "@/components/Card/SmallCard";
 import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthContext";
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
@@ -18,6 +19,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 };
 
 export default function ViewRoomPage() {
+  const { user } = useAuth();
   const router = useRouter();
   const { id, roomid } = router.query;
 
@@ -40,31 +42,30 @@ export default function ViewRoomPage() {
     hotelReference: String(id) || "",
   });
 
-useEffect(() => {
-  
-  const fetchRoomData = async () => {
-    if (!id || !roomid) {
-      console.log('❌ Missing parameters');
-      return;
-    }
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      if (!id || !roomid) {
+        console.log("❌ Missing parameters");
+        return;
+      }
 
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:5000/api/hotels/${id}/${roomid}`
-      );
-      const data = await res.json();
-      setHotel(data.hotel);
-      setRoom(data.room);
-    } catch (error) {
-      console.error("❌ Error fetching room data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `http://localhost:5000/api/hotels/${id}/${roomid}`
+        );
+        const data = await res.json();
+        setHotel(data.hotel);
+        setRoom(data.room);
+      } catch (error) {
+        console.error("❌ Error fetching room data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchRoomData();
-}, [id, roomid]);
+    fetchRoomData();
+  }, [id, roomid]);
 
   useEffect(() => {
     if (date?.from && date?.to && room) {
@@ -101,6 +102,14 @@ useEffect(() => {
     }));
   };
 
+  const handleOnClick = () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    setBookNow(true);
+  };
+
   const [bookNow, setBookNow] = useState<boolean>(false);
 
   if (loading) {
@@ -128,7 +137,9 @@ useEffect(() => {
             <div className="relative aspect-[16/8] md:w-[500] md:h-[300px] lg:w-[800px] lg:h-[400px] overflow-hidden rounded-sm">
               <Image src={room.image} fill alt={"test"} />
             </div>
-            <p className="font-semibold">{room.name} - {hotel?.name}</p>
+            <p className="font-semibold">
+              {room.name} - {hotel?.name}
+            </p>
             <p className="before:content-['₱'] after:content-['_per_night']">
               {room.price?.toLocaleString() ?? "0"}
             </p>
@@ -275,7 +286,7 @@ useEffect(() => {
               </div>
 
               <button
-                onClick={() => setBookNow(true)}
+                onClick={handleOnClick}
                 className="w-full py-2 bg-[#3C3D37] text-[#EEEEEE] border rounded-sm border-[#3C3D37] cursor-pointer hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200"
               >
                 Book Now

@@ -1,6 +1,7 @@
 import React from "react";
 import { packagesDisplayTypes } from "../types";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function PackageCard({
   packages,
@@ -28,6 +29,8 @@ export default function PackageCard({
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 250px"
                 className="object-cover object-center"
                 alt={packages.name}
+                priority={true}
+                loading="eager"
               />
             </div>
           ))}
@@ -58,11 +61,11 @@ export default function PackageCard({
             {packages.price.toLocaleString()}
           </p>
 
-          <button className="group px-[20px] py-[10px] bg-[#3C3D37] rounded-sm cursor-pointer border border-white hover:bg-white hover:border-[#3C3D37] transition-all duration-200 ease-in-out">
+          <Link href={`/ViewPackage/${packages.reference}`} className="group px-[20px] py-[10px] bg-[#3C3D37] rounded-sm cursor-pointer border border-white hover:bg-white hover:border-[#3C3D37] transition-all duration-200 ease-in-out">
             <p className="text-white group-hover:text-[#3C3D37] transition-colors duration-200 ease-in-out">
               View Details
             </p>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
