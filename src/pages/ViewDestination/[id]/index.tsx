@@ -86,6 +86,78 @@ export default function ViewDestination() {
     handlePagination(1);
   }, [hotels, handlePagination]);
 
+  // add to fav
+  const addToFavorites = async (destinationReference: string) => {
+console.log(destinationReference)
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found");
+        router.push("/login");
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:5000/api/bookings/favorites/add",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ reference: destinationReference }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add to favorites");
+      }
+
+      console.log("✅ Added to favorites:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error adding to favorites:", error);
+      throw error;
+    }
+  };
+
+  // remove to fav
+  // const removeFromFavorites = async (destinationReference: string) => {
+  //   try {
+  //     const token = localStorage.getItem("accessToken");
+  //     if (!token) {
+  //       console.error("No access token found");
+  //       router.push("/login");
+  //       return;
+  //     }
+
+  //     const response = await fetch(
+  //       `http://localhost:5000/api/bookings/favorites/remove/${destinationReference}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || "Failed to remove from favorites");
+  //     }
+
+  //     console.log("✅ Removed from favorites:", data);
+  //     return data;
+  //   } catch (error) {
+  //     console.error("❌ Error removing from favorites:", error);
+  //     throw error;
+  //   }
+  // };
+
   return (
     <div className="w-full bg-white pt-[50px] flex flex-col">
       {/* Head */}
@@ -135,7 +207,12 @@ export default function ViewDestination() {
               <p className="text-[15px]">{destination?.budget}</p>
             </div>
             <div className="flex gap-5 p-[10px]">
-              <button className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer hover:bg-[#C3B40E]/70 ">
+              <button
+                onClick={() => {
+                  addToFavorites(destination?.reference || "")
+                }}
+                className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer hover:bg-[#C3B40E]/70 "
+              >
                 Favorite
               </button>
 

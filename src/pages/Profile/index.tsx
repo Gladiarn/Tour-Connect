@@ -4,28 +4,29 @@ import { useAuth } from "@/context/AuthContext";
 import ProfileCard from "@/components/Card/ProfileCard";
 import FavoriteCard from "@/components/Card/FavoriteCard";
 import Pagination from "@/components/Pagination/Pagination";
-import { Booking } from "@/components/types";
-
+import { Booking, destinationsDisplayTypes, User } from "@/components/types";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const [fetchUser, setFetchUser] = useState<any>(null);
+  const [fetchUser, setFetchUser] = useState<User | null>(null);
   const [ongoingBookings, setOngoingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
-  const [favorites, setFavorites] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<destinationsDisplayTypes[]>([]);
   const [activeTab, setActiveTab] = useState<"ongoing" | "past" | "favorites">(
     "ongoing"
   );
 
   // Pagination states
-  const [paginated, setPaginated] = useState<Booking[] | any[]>([]);
+  const [paginated, setPaginated] = useState<
+    Booking[] | destinationsDisplayTypes[]
+  >([]);
   const itemsPerPage = 3;
   const [inputValue, setInputValue] = useState<string>("1");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Get the current data based on active tab
-  const getCurrentData = () => {
+  const getCurrentData = useCallback(() => {
     switch (activeTab) {
       case "ongoing":
         return ongoingBookings;
@@ -36,7 +37,7 @@ export default function ProfilePage() {
       default:
         return [];
     }
-  };
+  }, [activeTab, ongoingBookings, pastBookings, favorites]);
 
   // Calculate total pages based on current data
   const totalPages = Math.ceil(getCurrentData().length / itemsPerPage);
@@ -51,7 +52,7 @@ export default function ProfilePage() {
       setCurrentPage(page);
       setInputValue(page.toString());
     },
-    [activeTab, ongoingBookings, pastBookings, favorites, itemsPerPage]
+     [ itemsPerPage, getCurrentData]
   );
 
   useEffect(() => {
@@ -118,6 +119,7 @@ export default function ProfilePage() {
         );
         if (favoritesRes.ok) {
           const favoritesData = await favoritesRes.json();
+          console.log("fav", favoritesData.data);
           if (favoritesData.success) setFavorites(favoritesData.data);
         }
       } catch (error) {
@@ -150,22 +152,32 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-[#3C3D37]">{fetchUser?.name}</h1>
+            <h1 className="text-3xl font-bold text-[#3C3D37]">
+              {fetchUser?.name}
+            </h1>
             <p className="text-gray-600 mt-2">{fetchUser?.email}</p>
-            <p className="text-gray-500 mt-1">User Type: {fetchUser?.userType}</p>
+            <p className="text-gray-500 mt-1">
+              User Type: {fetchUser?.userType}
+            </p>
 
             <div className="flex flex-wrap gap-4 mt-4">
               <div className="bg-blue-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Ongoing Bookings</p>
-                <p className="text-xl font-bold text-blue-600">{ongoingBookings.length}</p>
+                <p className="text-xl font-bold text-blue-600">
+                  {ongoingBookings.length}
+                </p>
               </div>
               <div className="bg-green-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Past Bookings</p>
-                <p className="text-xl font-bold text-green-600">{pastBookings.length}</p>
+                <p className="text-xl font-bold text-green-600">
+                  {pastBookings.length}
+                </p>
               </div>
               <div className="bg-purple-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Favorites</p>
-                <p className="text-xl font-bold text-purple-600">{favorites.length}</p>
+                <p className="text-xl font-bold text-purple-600">
+                  {favorites.length}
+                </p>
               </div>
             </div>
           </div>
@@ -221,8 +233,12 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {paginated.map((booking: Booking) => (
-                      <ProfileCard key={booking._id} booking={booking} type="ongoing" />
+                    {(paginated as Booking[]).map((booking: Booking) => (
+                      <ProfileCard
+                        key={booking._id}
+                        booking={booking}
+                        type="ongoing"
+                      />
                     ))}
                   </div>
                   {totalPages > 1 && (
@@ -252,8 +268,12 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {paginated.map((booking: Booking) => (
-                      <ProfileCard key={booking._id} booking={booking} type="past" />
+                    {(paginated as Booking[]).map((booking: Booking) => (
+                      <ProfileCard
+                        key={booking._id}
+                        booking={booking}
+                        type="past"
+                      />
                     ))}
                   </div>
                   {totalPages > 1 && (
@@ -289,9 +309,11 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {paginated.map((favorite, index) => (
-                      <FavoriteCard key={index} favorite={favorite} index={index} />
-                    ))}
+                    {(paginated as destinationsDisplayTypes[]).map(
+                      (favorite, index) => (
+                        <FavoriteCard key={index} favorite={favorite} />
+                      )
+                    )}
                   </div>
                   {totalPages > 1 && (
                     <div className="mt-8">

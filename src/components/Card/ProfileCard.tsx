@@ -20,6 +20,7 @@ export default function ProfileCard({ booking, type }: ProfileCardProps) {
   };
 
   const getStatusText = (status: Booking['status']) => {
+    if(!status) return 'unknown';
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
@@ -39,7 +40,7 @@ export default function ProfileCard({ booking, type }: ProfileCardProps) {
             {getStatusText(booking.status)}
           </span>
           <span className="text-lg font-semibold">
-            ₱{booking.totalPrice.toLocaleString()}
+            ₱{booking.totalPrice?.toLocaleString()}
           </span>
         </div>
         <p className="font-semibold mb-1">Tour Type: {booking.tourType}</p>
@@ -48,9 +49,9 @@ export default function ProfileCard({ booking, type }: ProfileCardProps) {
           {new Date(booking.dateStart).toLocaleDateString()}
         </p>
         
-        {booking.transportation.length > 0 && (
+        {booking.transportation?.length > 0 && (
           <p className="text-sm text-gray-600">
-            Transportation: {booking.transportation.join(', ')}
+            Transportation: {booking.transportation?.join(', ')}
           </p>
         )}
         

@@ -149,3 +149,14 @@ export interface Booking {
   totalPrice: number;
   status: "upcoming" | "ongoing" | "completed" | "cancelled";
 }
+
+export interface User {
+  _id: string;
+  email: string;
+  name: string;
+  userType: string;
+  password: string;
+  refreshToken?: string | null;
+  favorites: string[];
+  bookings: Booking[];
+}

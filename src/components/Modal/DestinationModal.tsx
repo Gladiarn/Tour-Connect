@@ -164,9 +164,23 @@ export default function DestinationModal({
     }
   };
 
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center">
+      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+      <span className="ml-2">Processing...</span>
+    </div>
+  );
+
   return (
     <div className="flex flex-col text-[#3C3D37] gap-5">
       <div className="w-full text-center">
+        {bookingError && (
+          <p className="text-red-500 text-[14px]">{bookingError}</p>
+        )}
+
+        {bookingSuccess && (
+          <p className="text-green-500 text-[14px]">processing...</p>
+        )}
         <p className="text-[20px] font-semibold">{destination?.name}</p>
       </div>
 
@@ -234,12 +248,19 @@ export default function DestinationModal({
           </div>
 
           <button
-            onClick={() => {
-              handleBookNow();
-            }}
-            className="mt-3 w-full text-nowrap px-4 py-2 text-white border border-white rounded-sm bg-[#3C3D37] hover:bg-white hover:text-[#3C3D37] hover:border-[#3C3D37] cursor-pointer transition-colors ease-in-out duration-200"
+            onClick={handleBookNow}
+            disabled={isSubmitting}
+            className={`mt-3 w-full text-nowrap px-4 py-2 text-white border border-white rounded-sm transition-colors ease-in-out duration-200 ${
+              isSubmitting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#3C3D37] hover:bg-white hover:text-[#3C3D37] hover:border-[#3C3D37] cursor-pointer"
+            }`}
           >
-            Book - ₱ {booking.totalPrice.toLocaleString()}
+            {isSubmitting ? (
+              <LoadingSpinner />
+            ) : (
+              `Book - ₱ ${booking.totalPrice.toLocaleString()}`
+            )}
           </button>
         </div>
       </div>
