@@ -82,6 +82,7 @@ export interface hotelsTypes {
   images: string[];
   duration: string;
   reference: string;
+  location: string;
   rooms: {
     id: number;
     image: string;
@@ -112,6 +113,16 @@ export interface ViewRoomPageProps {
     guests: string[];
     area: string;
   };
+}
+export interface IUser {
+  _id?: string;
+  email: string;
+  name: string;
+  userType: string;
+  password: string;
+  refreshToken?: string | null;
+  favorites: string[];
+  bookings: Booking[];
 }
 
 export interface roomPageTypes {

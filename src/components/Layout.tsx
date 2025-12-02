@@ -15,7 +15,7 @@ export default function Layout({
       {!hideNavbar && <Navbar />}
       <main>{children}</main>
       <Footer />
-      <HybridChatbot /> {/* Add chatbot here */}
+      <HybridChatbot />
     </>
   );
 }

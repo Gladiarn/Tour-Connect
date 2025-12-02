@@ -46,9 +46,6 @@ export default function PopularDestinations() {
         body: JSON.stringify({ search }),
       });
 
-      // Option 2: Using GET with query parameter (uncomment if using this)
-      // const res = await fetch(`http://localhost:5000/api/destination/popular?search=${encodeURIComponent(search)}`);
-
       const result = await res.json();
       console.log("Fetched data:", result);
       setData(result);
@@ -83,7 +80,7 @@ export default function PopularDestinations() {
       });
 
       const result = await res.json();
-      setSuggestions(result.slice(0, 5)); // Show only top 5 for suggestions
+      setSuggestions(result.slice(0, 5));
       setShowSuggestions(result.length > 0);
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
@@ -99,7 +96,7 @@ export default function PopularDestinations() {
     // Debounced search for suggestions
     const timeoutId = setTimeout(() => {
       fetchSuggestions(query);
-    }, 300); // Wait 300ms after typing stops
+    }, 300);
 
     return () => clearTimeout(timeoutId);
   };
@@ -155,7 +152,7 @@ export default function PopularDestinations() {
 
   // Fetch initial data on component mount
   useEffect(() => {
-    fetchPopularDestinations(""); // Empty search fetches all
+    fetchPopularDestinations("");
   }, [fetchPopularDestinations]);
 
   if (isLoading && data.length === 0) {
