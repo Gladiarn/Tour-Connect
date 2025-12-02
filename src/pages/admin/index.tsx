@@ -13,9 +13,11 @@ import { useAuth } from "@/context/AuthContext";
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
+import { useRouter } from "next/router";
 // Types based on your models
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   // Tab state
   const [activeTab, setActiveTab] = useState<
@@ -154,7 +156,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
-        throw new Error("No authentication token found");
+        alert("No access token found please login");
       }
 
       const res = await fetch("http://localhost:5000/api/users/all", {
@@ -273,6 +275,7 @@ export default function AdminDashboard() {
         }
 
         await logout();
+        router.push('/')
       }
     } catch (error) {
       console.error("Logout error:", error);

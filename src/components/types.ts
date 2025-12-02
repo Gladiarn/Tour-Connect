@@ -76,6 +76,16 @@ export interface popularDestinationsDisplayTypes {
   reference: string;
 }
 
+export interface BookingFormState {
+  destinationReference: string | undefined;
+  tourType: string;
+  transportation: string[];
+  image: string | undefined;
+  dateBooked: string; // YYYY-MM-DD format
+  dateStart: string; // YYYY-MM-DD format
+  totalPrice: number;
+}
+
 export interface hotelsTypes {
   id: number;
   name: string;

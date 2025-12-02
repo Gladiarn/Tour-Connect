@@ -75,6 +75,10 @@ export default function Index() {
       }
 
       login(data.accessToken, data.refreshToken);
+      if(data.user.userType === 'admin'){
+        router.push("/admin");
+        return;
+      }
       router.push("/");
     } catch (error) {
       console.log(error);
