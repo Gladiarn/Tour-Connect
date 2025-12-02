@@ -37,7 +37,7 @@ export interface destinationsDataTypes {
 }
 
 export interface destinationsDisplayTypes {
-  id: number;
+  _id: number;
   name: string;
   activityType: string;
   rating: number;
@@ -63,7 +63,7 @@ export interface ratingsContextTypes {
 }
 
 export interface popularDestinationsDisplayTypes {
-  id: number;
+  _id: number;
   name: string;
   activityType: string;
   rating: number;
@@ -76,12 +76,23 @@ export interface popularDestinationsDisplayTypes {
   reference: string;
 }
 
+export interface BookingFormState {
+  destinationReference: string | undefined;
+  tourType: string;
+  transportation: string[];
+  image: string | undefined;
+  dateBooked: string; // YYYY-MM-DD format
+  dateStart: string; // YYYY-MM-DD format
+  totalPrice: number;
+}
+
 export interface hotelsTypes {
   id: number;
   name: string;
   images: string[];
   duration: string;
   reference: string;
+  location: string;
   rooms: {
     id: number;
     image: string;
@@ -112,6 +123,16 @@ export interface ViewRoomPageProps {
     guests: string[];
     area: string;
   };
+}
+export interface IUser {
+  _id?: string;
+  email: string;
+  name: string;
+  userType: string;
+  password: string;
+  refreshToken?: string | null;
+  favorites: string[];
+  bookings: Booking[];
 }
 
 export interface roomPageTypes {

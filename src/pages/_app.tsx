@@ -17,7 +17,7 @@ const poppins = Poppins({
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  const noLayoutRoutes = ["/login"];
+  const noLayoutRoutes = ["/login", "/admin"];
   const hideNavbar = noLayoutRoutes.includes(router.pathname);
 
   return (
