@@ -14,11 +14,33 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import { useRouter } from "next/router";
-// Types based on your models
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
+  const [authChecked, setAuthChecked] = useState(false);
+
+
+  useEffect(() => {
+
+    if (!isLoading) {
+
+      setAuthChecked(true);
+
+      if (!user) {
+
+        router.push("/login");
+        return;
+      }
+
+      if (!user.userType || user.userType !== "admin") {
+
+        router.push("/");
+        return;
+      }
+    }
+  }, [user, isLoading, router]);
+
   // Tab state
   const [activeTab, setActiveTab] = useState<
     "destinations" | "hotels" | "packages" | "users"
@@ -32,10 +54,13 @@ export default function AdminDashboard() {
   const [packages, setPackages] = useState<packagesDisplayTypes[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
 
-  // Loading and error states
-
   // Pagination state
-  const [paginated, setPaginated] = useState<destinationsDisplayTypes[] | hotelsTypes[] | IUser[] | packagesDisplayTypes[]>([]);
+  const [paginated, setPaginated] = useState<
+    | destinationsDisplayTypes[]
+    | hotelsTypes[]
+    | IUser[]
+    | packagesDisplayTypes[]
+  >([]);
   const itemsPerPage = 5;
   const [inputValue, setInputValue] = useState<string>("1");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -75,7 +100,6 @@ export default function AdminDashboard() {
   // Fetch destinations
   const fetchDestinations = async () => {
     try {
-      
       const res = await fetch("http://localhost:5000/api/destination/all");
 
       if (!res.ok) {
@@ -86,23 +110,18 @@ export default function AdminDashboard() {
 
       if (result) {
         setDestinations(result || []);
-      
       } else {
         setDestinations([]);
-        
       }
     } catch (error) {
       console.error("Failed to fetch destinations:", error);
       setDestinations([]);
-      
-    } 
+    }
   };
 
   // Fetch hotels
   const fetchHotels = async () => {
-
     try {
-     
       const res = await fetch("http://localhost:5000/api/hotels/all");
 
       if (!res.ok) {
@@ -113,22 +132,18 @@ export default function AdminDashboard() {
 
       if (result) {
         setHotels(result);
-     
       } else {
         setHotels([]);
-        
       }
     } catch (error) {
       console.error("Failed to fetch hotels:", error);
       setHotels([]);
-  
-    } 
+    }
   };
 
   // Fetch packages
   const fetchPackages = async () => {
     try {
-
       const res = await fetch("http://localhost:5000/api/packages/all");
 
       if (!res.ok) {
@@ -139,10 +154,8 @@ export default function AdminDashboard() {
 
       if (result.success) {
         setPackages(result.data || []);
-
       } else {
         setPackages([]);
-
       }
     } catch (error) {
       console.error("Failed to fetch packages:", error);
@@ -152,7 +165,6 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
@@ -176,33 +188,29 @@ export default function AdminDashboard() {
 
       if (result.success) {
         setUsers(result.data || []);
-
       } else {
         setUsers([]);
-
       }
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]);
-
     }
   };
 
-  // Fetch data when tab changes
+  // Fetch data when component mounts (only if user is admin)
   useEffect(() => {
-    const fetchData = async () => {
+    // Only fetch data if user is confirmed to be admin
+    if (authChecked && user && user.userType === "admin") {
+      const fetchData = async () => {
+        await fetchDestinations();
+        await fetchHotels();
+        await fetchPackages();
+        await fetchUsers();
+      };
 
-      await fetchDestinations();
-
-      await fetchHotels();
-
-      await fetchPackages();
-
-      await fetchUsers();
-    };
-
-    fetchData();
-  }, []);
+      fetchData();
+    }
+  }, [user, authChecked]);
 
   // Update pagination when data changes or tab changes
   useEffect(() => {
@@ -232,31 +240,6 @@ export default function AdminDashboard() {
     setCurrentPage(1);
   };
 
-  // const handleRefresh = async () => {
-  //   setError(null);
-  //   setLoading(true);
-
-  //   try {
-  //     switch (activeTab) {
-  //       case "destinations":
-  //         await fetchDestinations();
-  //         break;
-  //       case "hotels":
-  //         await fetchHotels();
-  //         break;
-  //       case "packages":
-  //         await fetchPackages();
-  //         break;
-  //       case "users":
-  //         await fetchUsers();
-  //         break;
-  //     }
-  //   } catch (error) {
-  //     console.error("Refresh failed:", error);
-  //     setError("Refresh failed");
-  //   }
-  // };
-
   const handleLogout = async () => {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
@@ -275,12 +258,30 @@ export default function AdminDashboard() {
         }
 
         await logout();
-        router.push('/')
+        router.push("/");
       }
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
+
+  // Show loading while auth is being checked
+  if (isLoading || !authChecked) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading admin dashboard...</div>
+      </div>
+    );
+  }
+
+  // If no user or not admin (should have redirected by now), show nothing
+  if (!user || user.userType !== "admin") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Access denied. Redirecting...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#EEEEEE] w-full min-h-screen p-[30px] py-[60px] flex flex-col gap-5 relative text-[#3C3D37]">
@@ -370,8 +371,12 @@ export default function AdminDashboard() {
           {activeTab === "destinations" && (
             <DestinationsTable data={paginated as destinationsDisplayTypes[]} />
           )}
-          {activeTab === "hotels" && <HotelsTable data={paginated as hotelsTypes[]} />}
-          {activeTab === "packages" && <PackagesTable data={paginated as packagesDisplayTypes[]} />}
+          {activeTab === "hotels" && (
+            <HotelsTable data={paginated as hotelsTypes[]} />
+          )}
+          {activeTab === "packages" && (
+            <PackagesTable data={paginated as packagesDisplayTypes[]} />
+          )}
           {activeTab === "users" && <UsersTable data={paginated as IUser[]} />}
 
           <Pagination

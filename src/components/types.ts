@@ -108,6 +108,51 @@ export interface hotelsTypes {
   rating: number;
 }
 
+export interface HotelBookingFormData {
+  name: string;
+  phoneNumber: string;
+  address: string;
+  dateRange: {
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+  };
+  nightCount: number;
+  totalPrice: number;
+  roomReference: string;
+  hotelReference: string;
+  image: string;
+}
+
+export interface HotelBooking {
+  _id: string;
+  name: string;
+  phoneNumber: string;
+  address: string;
+  checkInDate: string | Date;
+  checkOutDate: string | Date;
+  nightCount: number;
+  totalPrice: number;
+  roomReference: string;
+  hotelReference: string;
+  image: string;
+  roomDetails?: {
+    name: string;
+    price: number;
+    features: string[];
+    facilities: string[];
+    description: string;
+    guests: string[];
+    area: string;
+  };
+  hotelDetails?: {
+    name: string;
+    location: string;
+    rating: number;
+  };
+  dateBooked: string | Date;
+  status: "upcoming" | "ongoing" | "completed" | "cancelled";
+}
+
 export type CombinedDestination = popularDestinationsDisplayTypes & hotelsTypes;
 
 export interface ViewRoomPageProps {
@@ -157,6 +202,7 @@ export interface bookRoomTypes {
   dateRange: { startDate: Date | undefined; endDate: Date | undefined };
   nightCount: number;
   totalPrice: number;
+  image: string;
 }
 
 export interface Booking {
