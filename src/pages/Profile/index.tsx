@@ -4,7 +4,13 @@ import { useAuth } from "@/context/AuthContext";
 import ProfileCard from "@/components/Card/ProfileCard";
 import FavoriteCard from "@/components/Card/FavoriteCard";
 import Pagination from "@/components/Pagination/Pagination";
-import { Booking, destinationsDisplayTypes, User } from "@/components/types";
+import {
+  Booking,
+  destinationsDisplayTypes,
+  User,
+  HotelBooking,
+} from "@/components/types";
+import HotelBookingCard from "@/components/Card/HotelBookingCard";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -13,13 +19,14 @@ export default function ProfilePage() {
   const [ongoingBookings, setOngoingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
   const [favorites, setFavorites] = useState<destinationsDisplayTypes[]>([]);
-  const [activeTab, setActiveTab] = useState<"ongoing" | "past" | "favorites">(
-    "ongoing"
-  );
+  const [hotelBookings, setHotelBookings] = useState<HotelBooking[]>([]);
+  const [activeTab, setActiveTab] = useState<
+    "ongoing" | "past" | "favorites" | "hotels"
+  >("ongoing");
 
   // Pagination states
   const [paginated, setPaginated] = useState<
-    Booking[] | destinationsDisplayTypes[]
+    Booking[] | destinationsDisplayTypes[] | HotelBooking[]
   >([]);
   const itemsPerPage = 3;
   const [inputValue, setInputValue] = useState<string>("1");
@@ -34,10 +41,12 @@ export default function ProfilePage() {
         return pastBookings;
       case "favorites":
         return favorites;
+      case "hotels":
+        return hotelBookings;
       default:
         return [];
     }
-  }, [activeTab, ongoingBookings, pastBookings, favorites]);
+  }, [activeTab, ongoingBookings, pastBookings, favorites, hotelBookings]);
 
   // Calculate total pages based on current data
   const totalPages = Math.ceil(getCurrentData().length / itemsPerPage);
@@ -52,7 +61,7 @@ export default function ProfilePage() {
       setCurrentPage(page);
       setInputValue(page.toString());
     },
-     [ itemsPerPage, getCurrentData]
+    [itemsPerPage, getCurrentData]
   );
 
   useEffect(() => {
@@ -63,7 +72,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     handlePagination(currentPage);
-  }, [ongoingBookings, pastBookings, favorites, currentPage, handlePagination]);
+  }, [
+    ongoingBookings,
+    pastBookings,
+    favorites,
+    hotelBookings,
+    currentPage,
+    handlePagination,
+  ]);
 
   useEffect(() => {
     const fetchAllUserData = async () => {
@@ -119,9 +135,24 @@ export default function ProfilePage() {
         );
         if (favoritesRes.ok) {
           const favoritesData = await favoritesRes.json();
-          console.log("fav", favoritesData.data);
           if (favoritesData.success) setFavorites(favoritesData.data);
         }
+
+        const hotelsRes = await fetch(
+          "http://localhost:5000/api/users/hotel-bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (hotelsRes.ok) {
+          const hotelsData = await hotelsRes.json();
+          console.log('hotels, :', hotelsData.data)
+          if (hotelsData.success) setHotelBookings(hotelsData.data);
+        }
+
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -179,6 +210,12 @@ export default function ProfilePage() {
                   {favorites.length}
                 </p>
               </div>
+              <div className="bg-yellow-50 px-4 py-2 rounded-lg">
+                <p className="text-sm text-gray-600">Hotel Bookings</p>
+                <p className="text-xl font-bold text-yellow-600">
+                  {hotelBookings.length}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -187,10 +224,10 @@ export default function ProfilePage() {
       {/* Body - Tabs */}
       <div className="w-full min-h-[600px] bg-white p-[30px] text-[#3C3D37] mt-6">
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-gray-200 overflow-x-auto">
           <button
             onClick={() => setActiveTab("ongoing")}
-            className={`px-6 py-3 font-medium text-lg ${
+            className={`px-6 py-3 font-medium text-lg whitespace-nowrap ${
               activeTab === "ongoing"
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700"
@@ -200,7 +237,7 @@ export default function ProfilePage() {
           </button>
           <button
             onClick={() => setActiveTab("past")}
-            className={`px-6 py-3 font-medium text-lg ${
+            className={`px-6 py-3 font-medium text-lg whitespace-nowrap ${
               activeTab === "past"
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700"
@@ -210,13 +247,23 @@ export default function ProfilePage() {
           </button>
           <button
             onClick={() => setActiveTab("favorites")}
-            className={`px-6 py-3 font-medium text-lg ${
+            className={`px-6 py-3 font-medium text-lg whitespace-nowrap ${
               activeTab === "favorites"
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
             Favorites
+          </button>
+          <button
+            onClick={() => setActiveTab("hotels")}
+            className={`px-6 py-3 font-medium text-lg whitespace-nowrap ${
+              activeTab === "hotels"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Hotel Bookings
           </button>
         </div>
 
@@ -315,6 +362,44 @@ export default function ProfilePage() {
                       )
                     )}
                   </div>
+                  {totalPages > 1 && (
+                    <div className="mt-8">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        handlePagination={handlePagination}
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Hotel Bookings */}
+          {activeTab === "hotels" && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Hotel Bookings</h2>
+              {hotelBookings.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No hotel bookings found.</p>
+                  <button
+                    onClick={() => router.push("/hotels")}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Browse Hotels
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {(paginated as HotelBooking[]).map((hotel, index) => (
+                      <HotelBookingCard key={index} booking={hotel} />
+                    ))}
+                  </div>
+
                   {totalPages > 1 && (
                     <div className="mt-8">
                       <Pagination

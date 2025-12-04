@@ -12,6 +12,7 @@ import { CalendarIcon } from "lucide-react";
 import SmallCard from "@/components/Card/SmallCard";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
+
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
@@ -27,6 +28,10 @@ export default function ViewRoomPage() {
   const [hotel, setHotel] = useState<hotelsTypes | null>(null);
   const [room, setRoom] = useState<roomPageTypes | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bookNow, setBookNow] = useState<boolean>(false);
+  const [isBooking, setIsBooking] = useState<boolean>(false);
+  const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
   const [data, setData] = useState<bookRoomTypes>({
     name: "",
@@ -38,6 +43,7 @@ export default function ViewRoomPage() {
     },
     nightCount: 0,
     totalPrice: 0,
+    image: room?.image || "",
     roomReference: String(roomid) || "",
     hotelReference: String(id) || "",
   });
@@ -57,6 +63,14 @@ export default function ViewRoomPage() {
         const data = await res.json();
         setHotel(data.hotel);
         setRoom(data.room);
+
+        if (user?.name) {
+          dataSetter("name", user.name);
+        }
+
+        if (data.room?.image) {
+          dataSetter("image", data.room.image);
+        }
       } catch (error) {
         console.error("❌ Error fetching room data:", error);
       } finally {
@@ -65,7 +79,7 @@ export default function ViewRoomPage() {
     };
 
     fetchRoomData();
-  }, [id, roomid]);
+  }, [id, roomid, user]);
 
   useEffect(() => {
     if (date?.from && date?.to && room) {
@@ -110,7 +124,122 @@ export default function ViewRoomPage() {
     setBookNow(true);
   };
 
-  const [bookNow, setBookNow] = useState<boolean>(false);
+  // Function to send hotel booking
+  const sendHotelBooking = async () => {
+    try {
+      setIsBooking(true);
+      setBookingError(null);
+
+      // Validate required fields
+      if (!data.name.trim()) {
+        throw new Error("Name is required");
+      }
+      if (!data.phoneNumber.trim() || data.phoneNumber.length < 10) {
+        throw new Error("Valid phone number is required (minimum 10 digits)");
+      }
+      if (!data.address.trim()) {
+        throw new Error("Address is required");
+      }
+      if (!data.dateRange.startDate || !data.dateRange.endDate) {
+        throw new Error("Please select check-in and check-out dates");
+      }
+      if (data.nightCount <= 0) {
+        throw new Error("Please select valid dates");
+      }
+      if (!data.roomReference || !data.hotelReference) {
+        throw new Error("Room or hotel reference is missing");
+      }
+      if (!data.image) {
+        throw new Error("Image is required");
+      }
+
+      // Get token from localStorage
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("Please login first");
+      }
+
+      const bookingData = {
+        name: data.name.trim(),
+        phoneNumber: data.phoneNumber.trim(),
+        address: data.address.trim(),
+        dateRange: {
+          startDate: data.dateRange.startDate,
+          endDate: data.dateRange.endDate,
+        },
+        nightCount: data.nightCount,
+        totalPrice: data.totalPrice,
+        roomReference: data.roomReference,
+        hotelReference: data.hotelReference,
+        image: data.image,
+
+        roomDetails: room
+          ? {
+              name: room.name,
+              price: room.price,
+              features: room.features || [],
+              facilities: room.facilities || [],
+              description: room.description || "",
+              guests: room.guests || [],
+              area: room.area || "",
+            }
+          : undefined,
+        hotelDetails: hotel
+          ? {
+              name: hotel.name,
+              location: hotel.location,
+              rating: hotel.rating,
+            }
+          : undefined,
+      };
+
+      console.log("Sending booking data:", bookingData);
+
+      const response = await fetch(
+        "http://localhost:5000/api/users/hotel-bookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(bookingData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to create booking");
+      }
+
+      if (!result.success) {
+        throw new Error(result.message || "Booking failed");
+      }
+
+      // Booking successful
+      setBookingSuccess(true);
+      console.log("Booking created successfully:", result.data);
+
+      // Optionally redirect to profile page or show success message
+      setTimeout(() => {
+        router.push("/profile");
+      }, 2000);
+    } catch (error) {
+      console.error("Booking error:", error);
+      setBookingError(
+        error instanceof Error
+          ? error.message
+          : "An error occurred during booking"
+      );
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
+  const handleConfirmBooking = () => {
+    sendHotelBooking();
+  };
 
   if (loading) {
     return (
@@ -123,7 +252,7 @@ export default function ViewRoomPage() {
   if (!room) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
-        Loading room...
+        Room not found
       </div>
     );
   }
@@ -150,6 +279,21 @@ export default function ViewRoomPage() {
           {bookNow ? (
             <div className="p-[15px] py-[20px] flex flex-col gap-5 bg-[#FFFFFF] rounded-md max-w-[450px] w-full min-w-[300px] h-fit">
               <p className="font-semibold text-[15px]">BOOKING DETAILS</p>
+
+              {/* Success Message */}
+              {bookingSuccess && (
+                <div className="p-3 bg-green-100 text-green-800 rounded-md">
+                  ✅ Booking successful!
+                </div>
+              )}
+
+              {/* Error Message */}
+              {bookingError && (
+                <div className="p-3 bg-red-100 text-red-800 rounded-md">
+                  ❌ {bookingError}
+                </div>
+              )}
+
               <div className="w-full flex gap-2">
                 <div className="flex flex-col">
                   <label htmlFor="name">Name</label>
@@ -239,10 +383,18 @@ export default function ViewRoomPage() {
                 </p>
               </div>
               <button
-                onClick={() => console.log(data)}
-                className="w-full py-2 bg-[#3C3D37] text-[#EEEEEE] border rounded-sm border-[#3C3D37] cursor-pointer hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200"
+                onClick={handleConfirmBooking}
+                disabled={isBooking || bookingSuccess}
+                className="w-full py-2 bg-[#3C3D37] text-[#EEEEEE] border rounded-sm border-[#3C3D37] cursor-pointer hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Confirm
+                {isBooking ? "Processing..." : "Confirm Booking"}
+              </button>
+
+              <button
+                onClick={() => setBookNow(false)}
+                className="w-full py-2 bg-gray-200 text-gray-700 border rounded-sm border-gray-300 cursor-pointer hover:bg-gray-300 transition-all ease-in-out duration-200"
+              >
+                Back
               </button>
             </div>
           ) : (

@@ -11,6 +11,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
+  userType: string;
 }
 
 interface AuthContextType {

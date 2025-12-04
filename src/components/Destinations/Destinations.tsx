@@ -18,21 +18,35 @@ export default function Destinations() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data?.length / itemsPerPage);
 
-   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/destination/all");
-        const result = await res.json();
-        setData(result);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-        setData([]);
-      }
-    };
-    
-    fetchData();
-  }, []);
+  const [destinationsData, setDestinationsData] =
+    useState<destinationsDataTypes>({
+      province: "",
+      activityType: "",
+      priceRange: "",
+    });
 
+  const fetchDestinations = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/destination/filter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(destinationsData),
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        setData(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch:", error);
+    }
+  }, [destinationsData]);
+
+  useEffect(() => {
+    fetchDestinations();
+  }, [fetchDestinations]);
 
   const handlePagination = useCallback(
     (page: number) => {
@@ -65,13 +79,6 @@ export default function Destinations() {
       setWidth(triggerRef.current.offsetWidth);
     }
   }, []);
-
-  const [destinationsData, setDestinationsData] =
-    useState<destinationsDataTypes>({
-      province: "",
-      activityType: "",
-      priceRange: "",
-    });
 
   const dataSetter = <K extends keyof destinationsDataTypes>(
     key: K,
@@ -232,9 +239,10 @@ export default function Destinations() {
     xl:grid-cols-3
     mx-auto justify-items-center"
         >
-          {paginated && paginated.map((info, index) => (
-            <MainCard info={info} key={index} />
-          ))}
+          {paginated &&
+            paginated.map((info, index) => (
+              <MainCard info={info} key={index} />
+            ))}
         </div>
 
         <Pagination
