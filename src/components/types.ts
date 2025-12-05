@@ -170,7 +170,7 @@ export interface ViewRoomPageProps {
   };
 }
 export interface IUser {
-  _id?: string;
+  _id?: string | undefined;
   email: string;
   name: string;
   userType: string;
