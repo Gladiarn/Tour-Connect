@@ -2,6 +2,10 @@ import DestinationsTable from "@/components/admin/DestinationsTable";
 import HotelsTable from "@/components/admin/HotelsTable";
 import PackagesTable from "@/components/admin/PackagesTable";
 import UsersTable from "@/components/admin/UsersTable";
+import AddUserModal from "@/components/Modal/AddUserModal";
+import AddDestinationModal from "@/components/Modal/AddDestinationModal";
+import AddHotelModal from "@/components/Modal/AddHotelModal";
+import AddPackageModal from "@/components/Modal/AddPackageModal";
 import StatsCard from "@/components/Card/StatsCard";
 import {
   destinationsDisplayTypes,
@@ -15,26 +19,29 @@ import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import { useRouter } from "next/router";
 
+// Import Dialog components (assuming you're using @radix-ui/react-dialog)
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"; // Adjust the import path based on your setup
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { user, logout, isLoading } = useAuth();
   const [authChecked, setAuthChecked] = useState(false);
 
-
   useEffect(() => {
-
     if (!isLoading) {
-
       setAuthChecked(true);
-
       if (!user) {
-
         router.push("/login");
         return;
       }
-
       if (!user.userType || user.userType !== "admin") {
-
         router.push("/");
         return;
       }
@@ -53,6 +60,26 @@ export default function AdminDashboard() {
   const [hotels, setHotels] = useState<hotelsTypes[]>([]);
   const [packages, setPackages] = useState<packagesDisplayTypes[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
+
+  // Refresh functions
+  const refreshDestinations = useCallback(() => {
+    fetchDestinations();
+  }, []);
+
+  const refreshHotels = useCallback(() => {
+    fetchHotels();
+  }, []);
+
+  const refreshPackages = useCallback(() => {
+    fetchPackages();
+  }, []);
+
+  const refreshUsers = useCallback(() => {
+    fetchUsers();
+  }, []);
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
 
   // Pagination state
   const [paginated, setPaginated] = useState<
@@ -81,6 +108,61 @@ export default function AdminDashboard() {
         return [];
     }
   }, [activeTab, destinations, hotels, packages, users]);
+
+  // Get the appropriate modal component based on active tab
+const getModalComponent = () => {
+  switch (activeTab) {
+    case "destinations":
+      return (
+        <AddDestinationModal
+          onClose={() => setShowModal(false)}
+          onDestinationAdded={refreshDestinations}
+        />
+      );
+    case "hotels":
+      return (
+        <AddHotelModal
+          onClose={() => setShowModal(false)}
+          onHotelAdded={refreshHotels}
+        />
+      );
+    case "packages":
+      return (
+        <AddPackageModal
+          onClose={() => setShowModal(false)}
+          onPackageAdded={refreshPackages}
+        />
+      );
+    case "users":
+      return (
+        <AddUserModal
+          onClose={() => setShowModal(false)}
+          onUserAdded={() => {
+            refreshUsers();
+            setShowModal(false);
+          }}
+        />
+      );
+    default:
+      return null;
+  }
+};
+
+// Also update the modal title
+const getModalTitle = () => {
+  switch (activeTab) {
+    case "destinations":
+      return "Add New Destination";
+    case "hotels":
+      return "Add New Hotel";
+    case "packages":
+      return "Add New Package";
+    case "users":
+      return "Add New User";
+    default:
+      return "Add Record";
+  }
+};
 
   // Handle pagination
   const handlePagination = useCallback(
@@ -197,7 +279,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Fetch data when component mounts (only if user is admin)
   useEffect(() => {
     // Only fetch data if user is confirmed to be admin
     if (authChecked && user && user.userType === "admin") {
@@ -285,109 +366,130 @@ export default function AdminDashboard() {
 
   return (
     <div className="bg-[#EEEEEE] w-full min-h-screen p-[30px] py-[60px] flex flex-col gap-5 relative text-[#3C3D37]">
-      <div className="w-full py-[5px] px-[30px] bg-white fixed top-0 left-0 z-10 flex justify-between items-center">
-        <p className="">
-          Hello <b>{user?.name}</b> Welcome
-        </p>
-        {user ? (
-          <button
-            onClick={handleLogout}
-            className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
-          >
-            Log-Out
-          </button>
-        ) : (
-          <Link
-            href="/login"
-            className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
-          >
-            Log-In
-          </Link>
-        )}
-      </div>
-      <div className="flex flex-wrap gap-5 w-full">
-        {[
-          { title: "Destinations" as const, value: destinations.length },
-          { title: "Hotels" as const, value: hotels.length },
-          { title: "Packages" as const, value: packages.length },
-          { title: "Users" as const, value: users.length },
-        ].map((stat) => (
-          <StatsCard key={stat.title} title={stat.title} value={stat.value} />
-        ))}
-      </div>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <div className="w-full py-[5px] px-[30px] bg-white fixed top-0 left-0 z-10 flex justify-between items-center">
+          <p className="">
+            Hello <b>{user?.name}</b> Welcome
+          </p>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
+            >
+              Log-Out
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
+            >
+              Log-In
+            </Link>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-5 w-full">
+          {[
+            { title: "Destinations" as const, value: destinations.length },
+            { title: "Hotels" as const, value: hotels.length },
+            { title: "Packages" as const, value: packages.length },
+            { title: "Users" as const, value: users.length },
+          ].map((stat) => (
+            <StatsCard key={stat.title} title={stat.title} value={stat.value} />
+          ))}
+        </div>
 
-      <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200">
-        {/* Tab Header */}
-        <div className="border-b flex justify-between items-center pr-6 border-gray-200">
-          <div className="flex px-6 py-4 gap-4">
-            <button
-              onClick={() => handleTabChange("destinations")}
-              className={`px-2 py-3 font-medium text-lg transition-all relative ${
-                activeTab === "destinations"
-                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Destinations
-            </button>
-            <button
-              onClick={() => handleTabChange("hotels")}
-              className={`px-2 py-3 font-medium text-lg transition-all relative ${
-                activeTab === "hotels"
-                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Hotels
-            </button>
-            <button
-              onClick={() => handleTabChange("packages")}
-              className={`px-2 py-3 font-medium text-lg transition-all relative ${
-                activeTab === "packages"
-                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Packages
-            </button>
-            <button
-              onClick={() => handleTabChange("users")}
-              className={`px-2 py-3 font-medium text-lg transition-all relative ${
-                activeTab === "users"
-                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Users
-            </button>
+        <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+          {/* Tab Header */}
+          <div className="border-b flex justify-between items-center pr-6 border-gray-200">
+            <div className="flex px-6 py-4 gap-4">
+              <button
+                onClick={() => handleTabChange("destinations")}
+                className={`px-2 py-3 font-medium text-lg transition-all relative ${
+                  activeTab === "destinations"
+                    ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Destinations
+              </button>
+              <button
+                onClick={() => handleTabChange("hotels")}
+                className={`px-2 py-3 font-medium text-lg transition-all relative ${
+                  activeTab === "hotels"
+                    ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Hotels
+              </button>
+              <button
+                onClick={() => handleTabChange("packages")}
+                className={`px-2 py-3 font-medium text-lg transition-all relative ${
+                  activeTab === "packages"
+                    ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Packages
+              </button>
+              <button
+                onClick={() => handleTabChange("users")}
+                className={`px-2 py-3 font-medium text-lg transition-all relative ${
+                  activeTab === "users"
+                    ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Users
+              </button>
+            </div>
+
+            {/* Dialog Trigger for Add Record Button */}
+            <DialogTrigger asChild>
+              <button className="px-3 py-2 bg-blue-600 text-white rounded-md w-fit h-fit hover:bg-blue-700 transition-colors ease-in-out duration-200">
+                Add Record
+              </button>
+            </DialogTrigger>
           </div>
-          <button className="px-3 py-2 bg-blue-600 text-white rounded-md w-fit h-fit hover:bg-blue-700 transition-colors ease-in-out duration-200">
-            Add Record
-          </button>
-        </div>
 
-        {/* Empty Body */}
-        <div className="p-6">
-          {activeTab === "destinations" && (
-            <DestinationsTable data={paginated as destinationsDisplayTypes[]} />
-          )}
-          {activeTab === "hotels" && (
-            <HotelsTable data={paginated as hotelsTypes[]} />
-          )}
-          {activeTab === "packages" && (
-            <PackagesTable data={paginated as packagesDisplayTypes[]} />
-          )}
-          {activeTab === "users" && <UsersTable data={paginated as IUser[]} />}
+          {/* Dialog Content */}
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{getModalTitle()}</DialogTitle>
+              <DialogDescription>
+                Fill in the details to add a new {activeTab.slice(0, -1)}.
+              </DialogDescription>
+            </DialogHeader>
+            {getModalComponent()}
+          </DialogContent>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            handlePagination={handlePagination}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-          />
+          {/* Empty Body */}
+          <div className="p-6">
+            {activeTab === "destinations" && (
+              <DestinationsTable
+                data={paginated as destinationsDisplayTypes[]}
+              />
+            )}
+            {activeTab === "hotels" && (
+              <HotelsTable data={paginated as hotelsTypes[]} />
+            )}
+            {activeTab === "packages" && (
+              <PackagesTable data={paginated as packagesDisplayTypes[]} />
+            )}
+            {activeTab === "users" && (
+              <UsersTable data={paginated as IUser[]} />
+            )}
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePagination={handlePagination}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+            />
+          </div>
         </div>
-      </div>
+      </Dialog>
     </div>
   );
 }
