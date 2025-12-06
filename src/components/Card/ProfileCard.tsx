@@ -55,7 +55,7 @@ export default function ProfileCard({ booking, type, onBookingCancelled }: Profi
       const token = localStorage.getItem('accessToken');
       
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error('No authentication token found.');
       }
 
       const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/cancel`, {
