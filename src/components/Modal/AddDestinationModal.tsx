@@ -1,10 +1,12 @@
 // components/admin/AddDestinationModal.tsx
-import React, { useState } from 'react';
-import { MapPin, Loader2, CheckCircle, XCircle, Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Loader2, CheckCircle, XCircle, Plus, Trash2, Edit } from 'lucide-react';
+import { destinationsDisplayTypes } from '../types'; // Import your types
 
 interface AddDestinationModalProps {
   onClose: () => void;
   onDestinationAdded: () => void;
+  editingDestination?: destinationsDisplayTypes | null; // Add this prop for editing
 }
 
 interface DestinationFormData {
@@ -20,7 +22,7 @@ interface DestinationFormData {
   reference: string;
 }
 
-export default function AddDestinationModal({ onClose, onDestinationAdded }: AddDestinationModalProps) {
+export default function AddDestinationModal({ onClose, onDestinationAdded, editingDestination }: AddDestinationModalProps) {
   const [formData, setFormData] = useState<DestinationFormData>({
     name: '',
     activityType: '',
@@ -37,6 +39,44 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Initialize form with destination data when editing
+  useEffect(() => {
+    if (editingDestination) {
+      setFormData({
+        name: editingDestination.name || '',
+        activityType: editingDestination.activityType || '',
+        rating: editingDestination.rating || 4.0,
+        images: editingDestination.images && editingDestination.images.length > 0 
+          ? [...editingDestination.images] 
+          : [''],
+        description: editingDestination.description || '',
+        budget: editingDestination.budget || 0,
+        location: editingDestination.location || '',
+        bestTimeToVisit: editingDestination.bestTimeToVisit || '',
+        tips: editingDestination.tips && Array.isArray(editingDestination.tips)
+          ? [...editingDestination.tips]
+          : [''],
+        reference: editingDestination.reference || ''
+      });
+    } else {
+      // Reset form for adding new destination
+      setFormData({
+        name: '',
+        activityType: '',
+        rating: 4.0,
+        images: [''],
+        description: '',
+        budget: 0,
+        location: '',
+        bestTimeToVisit: '',
+        tips: [''],
+        reference: ''
+      });
+    }
+    setError(null);
+    setSuccess(false);
+  }, [editingDestination]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -158,8 +198,15 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
         tips: formData.tips.filter(tip => tip.trim() !== '')
       };
 
-      const response = await fetch('http://localhost:5000/api/destination/create', {
-        method: 'POST',
+      // Use different URLs for add vs edit
+      const url = editingDestination 
+        ? `http://localhost:5000/api/destination/${editingDestination.reference}` // PUT: /api/destination/:reference
+        : 'http://localhost:5000/api/destination/create'; // POST: /api/destination/create
+      
+      const method = editingDestination ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -170,25 +217,27 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create destination');
+        throw new Error(result.message || `Failed to ${editingDestination ? 'update' : 'create'} destination`);
       }
 
       // Success
       setSuccess(true);
       
-      // Reset form
-      setFormData({
-        name: '',
-        activityType: '',
-        rating: 4.0,
-        images: [''],
-        description: '',
-        budget: 0,
-        location: '',
-        bestTimeToVisit: '',
-        tips: [''],
-        reference: ''
-      });
+      // Reset form if creating new destination
+      if (!editingDestination) {
+        setFormData({
+          name: '',
+          activityType: '',
+          rating: 4.0,
+          images: [''],
+          description: '',
+          budget: 0,
+          location: '',
+          bestTimeToVisit: '',
+          tips: [''],
+          reference: ''
+        });
+      }
 
       // Refresh destination list after a delay
       setTimeout(() => {
@@ -202,7 +251,7 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
       } else if (typeof error === 'string') {
         setError(error);
       } else {
-        setError('An unexpected error occurred while creating the destination');
+        setError(`An unexpected error occurred while ${editingDestination ? 'updating' : 'creating'} the destination`);
       }
     } finally {
       setIsLoading(false);
@@ -236,15 +285,27 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
           <div className="flex justify-center">
             <CheckCircle className="w-12 h-12 text-green-500" />
           </div>
-          <h3 className="text-xl font-semibold text-green-600">Destination Created Successfully!</h3>
-          <p className="text-gray-600">The new destination has been added to the system.</p>
+          <h3 className="text-xl font-semibold text-green-600">
+            {editingDestination ? 'Destination Updated Successfully!' : 'Destination Created Successfully!'}
+          </h3>
+          <p className="text-gray-600">
+            {editingDestination 
+              ? 'The destination has been updated in the system.' 
+              : 'The new destination has been added to the system.'
+            }
+          </p>
         </div>
       ) : (
         <>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Add New Destination</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {editingDestination ? 'Edit Destination' : 'Add New Destination'}
+            </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Create a new travel destination with details and images.
+              {editingDestination 
+                ? 'Update destination information and details.'
+                : 'Create a new travel destination with details and images.'
+              }
             </p>
           </div>
 
@@ -393,8 +454,14 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
                     placeholder="e.g., BALI-BEACH-001"
                     disabled={isLoading}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    readOnly={!!editingDestination} // Make reference read-only when editing
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-gray-50"
                   />
+                  {editingDestination && (
+                    <p className="text-xs text-gray-500">
+                      Reference cannot be changed when editing
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -516,12 +583,21 @@ export default function AddDestinationModal({ onClose, onDestinationAdded }: Add
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating Destination...
+                    {editingDestination ? 'Updating Destination...' : 'Creating Destination...'}
                   </>
                 ) : (
                   <>
-                    <MapPin className="w-4 h-4" />
-                    Create Destination
+                    {editingDestination ? (
+                      <>
+                        <Edit className="w-4 h-4" />
+                        Update Destination
+                      </>
+                    ) : (
+                      <>
+                        <MapPin className="w-4 h-4" />
+                        Create Destination
+                      </>
+                    )}
                   </>
                 )}
               </button>

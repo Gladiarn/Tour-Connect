@@ -6,8 +6,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { MapPinCheckInside, Users } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import PackageModal from "@/components/Modal/PackageModal";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Link from "next/link";
+
 export default function ViewPackagePage() {
-    const {user} = useAuth();
+  const { user } = useAuth();
   const [destination, setDestination] = useState<packagesDisplayTypes | null>(
     null
   );
@@ -15,13 +27,6 @@ export default function ViewPackagePage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { reference } = router.query;
-
-  const handleBook = () => {
-    if (!user) {
-      router.push('/login');
-    }
-
-  }
 
   useEffect(() => {
     const fetchPackage = async () => {
@@ -105,7 +110,7 @@ export default function ViewPackagePage() {
         <div className="w-full text-[#3C3D37] ">
           <p className="text-[24px] font-semibold">{destination.name}</p>
           <span className="flex items-center gap-1">
-            <MapPinCheckInside className=""/>
+            <MapPinCheckInside className="" />
             <p className="font-semibold">{destination.location} </p>
           </span>
         </div>
@@ -141,14 +146,43 @@ export default function ViewPackagePage() {
           <p className="text-[28px] font-semibold before:content-['₱'] before:font-medium">
             {destination.price.toLocaleString()}
           </p>
-          <button onClick={handleBook} className="min-w-[250px] text-center text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200 text-[18px] text-nowrap">
-            Book Now
-          </button>
+
+          {/* Dialog for Package Booking */}
+          <Dialog>
+            <DialogTrigger asChild>
+              {!user ? (
+                <Link
+                  href="/login"
+                  className="min-w-[250px] text-center text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200 text-[18px] text-nowrap"
+                >
+                  Book Now
+                </Link>
+              ) : (
+                <button className="min-w-[250px] text-center text-white bg-[#3C3D37] border border-white rounded-md px-4 py-2 w-full cursor-pointer hover:border-[#3C3D37] hover:bg-white hover:text-[#3C3D37] transition-all ease-in-out duration-200 text-[18px] text-nowrap">
+                  Book Now
+                </button>
+              )}
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[90vh]">
+              <DialogHeader>
+                <DialogTitle>Book Package</DialogTitle>
+                <DialogDescription>
+                  Complete your booking for {destination.name}
+                </DialogDescription>
+              </DialogHeader>
+              <PackageModal packageItem={destination} />
+            </DialogContent>
+          </Dialog>
+
           <div className="flex flex-col gap-1">
             <p className="font-semibold">Payment Method</p>
             <p className="before:content-['₱'] after:content-['_per_head'] text-[15px]">
               {destination.pricePerHead}
             </p>
+          </div>
+          <div className="flex flex-col gap-1 mt-2">
+            <p className="font-semibold">Duration</p>
+            <p className="text-[15px]">{destination.duration}</p>
           </div>
         </div>
       </div>

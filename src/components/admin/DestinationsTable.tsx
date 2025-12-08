@@ -2,17 +2,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { destinationsDisplayTypes } from '../types';
 import { Trash2, Edit, X, Check, Loader2 } from 'lucide-react';
+import AddDestinationModal from '@/components/Modal/AddDestinationModal'; // Adjust path as needed
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'; // Using the same Dialog component as hotels
 
 interface DestinationsTableProps {
   data: destinationsDisplayTypes[];
   onDestinationDeleted?: () => void;
+  onDestinationUpdated?: () => void; // Add this prop for updating
 }
 
-export default function DestinationsTable({ data, onDestinationDeleted }: DestinationsTableProps) {
+export default function DestinationsTable({ data, onDestinationDeleted, onDestinationUpdated }: DestinationsTableProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [deletePosition, setDeletePosition] = useState<{x: number, y: number} | null>(null);
   const deleteButtonRefs = useRef<Record<string, HTMLButtonElement>>({});
+  
+  // Add these states for edit functionality
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingDestination, setEditingDestination] = useState<destinationsDisplayTypes | null>(null);
 
   const handleDeleteClick = (destinationId: string, event: React.MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -34,6 +47,12 @@ export default function DestinationsTable({ data, onDestinationDeleted }: Destin
     
     setDeletePosition({ x: modalX, y: modalY });
     setConfirmDelete(destinationId);
+  };
+
+  // Add edit click handler
+  const handleEditClick = (destination: destinationsDisplayTypes) => {
+    setEditingDestination(destination);
+    setShowEditDialog(true);
   };
 
   const handleConfirmDelete = async (destinationId: string) => {
@@ -80,6 +99,21 @@ export default function DestinationsTable({ data, onDestinationDeleted }: Destin
   const handleCancelDelete = () => {
     setConfirmDelete(null);
     setDeletePosition(null);
+  };
+
+  // Add close edit dialog handler
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingDestination(null);
+  };
+
+  // Add destination updated handler
+  const handleDestinationUpdated = () => {
+    if (onDestinationUpdated) {
+      onDestinationUpdated();
+    }
+    setShowEditDialog(false);
+    setEditingDestination(null);
   };
 
   // Close modal when clicking outside
@@ -148,20 +182,23 @@ export default function DestinationsTable({ data, onDestinationDeleted }: Destin
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1">
+                  {/* Edit Button */}
+                  <button 
+                    onClick={() => handleEditClick(destination)}
+                    className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1"
+                  >
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
+                  {/* Delete Button */}
                   <button
                     ref={el => {
                       if (el && destination._id) {
-                        // Convert _id to string to ensure it's always a string
                         const idString = String(destination._id);
                         deleteButtonRefs.current[idString] = el;
                       }
                     }}
                     onClick={(e) => {
-                      // Ensure _id is treated as string
                       if (destination._id) {
                         handleDeleteClick(String(destination._id), e);
                       }
@@ -187,6 +224,27 @@ export default function DestinationsTable({ data, onDestinationDeleted }: Destin
           </tbody>
         </table>
       </div>
+
+      {/* Edit Destination Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingDestination ? "Edit Destination" : "Add New Destination"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingDestination 
+                ? `Edit the details for ${editingDestination.name}.` 
+                : "Fill in the details to add a new destination."}
+            </DialogDescription>
+          </DialogHeader>
+          <AddDestinationModal
+            onClose={handleCloseEditDialog}
+            onDestinationAdded={handleDestinationUpdated}
+            editingDestination={editingDestination}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Modal */}
       {confirmDelete && deletePosition && (

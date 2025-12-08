@@ -6,6 +6,13 @@ export interface packagesDataTypes {
   priceRange: string;
 }
 
+export interface PackageBookingFormState {
+  packageReference: string;
+  dateBooked: string;
+  dateStart: string; 
+  image: string;
+  totalPrice: number;
+}
 export interface infoCardTypes {
   title: string;
   body: string;
