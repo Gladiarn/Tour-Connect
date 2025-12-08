@@ -1,17 +1,27 @@
-
 import React, { useState, useEffect } from "react";
 import { packagesDisplayTypes } from "../types";
 import { Trash2, Edit, X, Check, Loader2 } from "lucide-react";
+import AddPackageModal from "@/components/Modal/AddPackageModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface PackagesTableProps {
   data: packagesDisplayTypes[];
   onPackageDeleted?: () => void;
+  onPackageUpdated?: () => void;
 }
 
-export default function PackagesTable({ data, onPackageDeleted }: PackagesTableProps) {
+export default function PackagesTable({ data, onPackageDeleted, onPackageUpdated }: PackagesTableProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [deletePosition, setDeletePosition] = useState<{x: number, y: number} | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingPackage, setEditingPackage] = useState<packagesDisplayTypes | null>(null);
 
   const handleDeleteClick = (packageReference: string, event: React.MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -29,6 +39,11 @@ export default function PackagesTable({ data, onPackageDeleted }: PackagesTableP
     
     setDeletePosition({ x: modalX, y: modalY });
     setConfirmDelete(packageReference);
+  };
+
+  const handleEditClick = (pkg: packagesDisplayTypes) => {
+    setEditingPackage(pkg);
+    setShowEditDialog(true);
   };
 
   const handleConfirmDelete = async (packageReference: string) => {
@@ -61,8 +76,6 @@ export default function PackagesTable({ data, onPackageDeleted }: PackagesTableP
         if (onPackageDeleted) {
           onPackageDeleted();
         }
-        
-        window.location.reload();
       } else {
         throw new Error(result.message);
       }
@@ -79,6 +92,19 @@ export default function PackagesTable({ data, onPackageDeleted }: PackagesTableP
   const handleCancelDelete = () => {
     setConfirmDelete(null);
     setDeletePosition(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingPackage(null);
+  };
+
+  const handlePackageUpdated = () => {
+    if (onPackageUpdated) {
+      onPackageUpdated();
+    }
+    setShowEditDialog(false);
+    setEditingPackage(null);
   };
 
   useEffect(() => {
@@ -143,7 +169,10 @@ export default function PackagesTable({ data, onPackageDeleted }: PackagesTableP
                   <div className="text-xs text-gray-500">${pkg.pricePerHead}/pax</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1">
+                  <button 
+                    onClick={() => handleEditClick(pkg)}
+                    className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1"
+                  >
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
@@ -170,6 +199,27 @@ export default function PackagesTable({ data, onPackageDeleted }: PackagesTableP
           </tbody>
         </table>
       </div>
+
+      {/* Edit Package Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingPackage ? "Edit Package" : "Add New Package"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingPackage 
+                ? `Edit the details for ${editingPackage.name}.` 
+                : "Fill in the details to add a new package."}
+            </DialogDescription>
+          </DialogHeader>
+          <AddPackageModal
+            onClose={handleCloseEditDialog}
+            onPackageAdded={handlePackageUpdated}
+            editingPackage={editingPackage}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Modal */}
       {confirmDelete && deletePosition && (
