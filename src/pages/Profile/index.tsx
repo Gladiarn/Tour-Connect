@@ -9,8 +9,10 @@ import {
   destinationsDisplayTypes,
   User,
   HotelBooking,
+  PackageBooking, // Add this import
 } from "@/components/types";
 import HotelBookingCard from "@/components/Card/HotelBookingCard";
+import PackageBookingCard from "@/components/Card/PackageBookingCard";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -20,13 +22,14 @@ export default function ProfilePage() {
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
   const [favorites, setFavorites] = useState<destinationsDisplayTypes[]>([]);
   const [hotelBookings, setHotelBookings] = useState<HotelBooking[]>([]);
+  const [packageBookings, setPackageBookings] = useState<PackageBooking[]>([]);
   const [activeTab, setActiveTab] = useState<
-    "ongoing" | "past" | "favorites" | "hotels"
+    "ongoing" | "past" | "favorites" | "hotels" | "packages"
   >("ongoing");
 
   // Pagination states
   const [paginated, setPaginated] = useState<
-    Booking[] | destinationsDisplayTypes[] | HotelBooking[]
+    Booking[] | destinationsDisplayTypes[] | HotelBooking[] | PackageBooking[]
   >([]);
   const itemsPerPage = 3;
   const [inputValue, setInputValue] = useState<string>("1");
@@ -43,10 +46,12 @@ export default function ProfilePage() {
         return favorites;
       case "hotels":
         return hotelBookings;
+      case "packages": // Add this case
+        return packageBookings;
       default:
         return [];
     }
-  }, [activeTab, ongoingBookings, pastBookings, favorites, hotelBookings]);
+  }, [activeTab, ongoingBookings, pastBookings, favorites, hotelBookings, packageBookings]);
 
   // Calculate total pages based on current data
   const totalPages = Math.ceil(getCurrentData().length / itemsPerPage);
@@ -77,6 +82,7 @@ export default function ProfilePage() {
     pastBookings,
     favorites,
     hotelBookings,
+    packageBookings, // Add this dependency
     currentPage,
     handlePagination,
   ]);
@@ -138,6 +144,7 @@ export default function ProfilePage() {
           if (favoritesData.success) setFavorites(favoritesData.data);
         }
 
+        // Fetch hotel bookings
         const hotelsRes = await fetch(
           "http://localhost:5000/api/users/hotel-bookings",
           {
@@ -149,8 +156,23 @@ export default function ProfilePage() {
         );
         if (hotelsRes.ok) {
           const hotelsData = await hotelsRes.json();
-          console.log('hotels, :', hotelsData.data)
           if (hotelsData.success) setHotelBookings(hotelsData.data);
+        }
+
+        // Fetch package bookings - Add this
+        const packagesRes = await fetch(
+          "http://localhost:5000/api/users/package-bookings",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (packagesRes.ok) {
+          const packagesData = await packagesRes.json();
+          console.log('Package bookings:', packagesData.data);
+          if (packagesData.success) setPackageBookings(packagesData.data);
         }
 
       } catch (error) {
@@ -160,6 +182,15 @@ export default function ProfilePage() {
 
     if (user) fetchAllUserData();
   }, [user]);
+
+  // Add to stats counter
+  const statsCount = {
+    ongoing: ongoingBookings.length,
+    past: pastBookings.length,
+    favorites: favorites.length,
+    hotels: hotelBookings.length,
+    packages: packageBookings.length, // Add this
+  };
 
   if (!user) {
     return (
@@ -195,25 +226,31 @@ export default function ProfilePage() {
               <div className="bg-blue-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Ongoing Bookings</p>
                 <p className="text-xl font-bold text-blue-600">
-                  {ongoingBookings.length}
+                  {statsCount.ongoing}
                 </p>
               </div>
               <div className="bg-green-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Past Bookings</p>
                 <p className="text-xl font-bold text-green-600">
-                  {pastBookings.length}
+                  {statsCount.past}
                 </p>
               </div>
               <div className="bg-purple-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Favorites</p>
                 <p className="text-xl font-bold text-purple-600">
-                  {favorites.length}
+                  {statsCount.favorites}
                 </p>
               </div>
               <div className="bg-yellow-50 px-4 py-2 rounded-lg">
                 <p className="text-sm text-gray-600">Hotel Bookings</p>
                 <p className="text-xl font-bold text-yellow-600">
-                  {hotelBookings.length}
+                  {statsCount.hotels}
+                </p>
+              </div>
+              <div className="bg-indigo-50 px-4 py-2 rounded-lg">
+                <p className="text-sm text-gray-600">Package Bookings</p>
+                <p className="text-xl font-bold text-indigo-600">
+                  {statsCount.packages}
                 </p>
               </div>
             </div>
@@ -264,6 +301,16 @@ export default function ProfilePage() {
             }`}
           >
             Hotel Bookings
+          </button>
+          <button
+            onClick={() => setActiveTab("packages")}
+            className={`px-6 py-3 font-medium text-lg whitespace-nowrap ${
+              activeTab === "packages"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Package Bookings
           </button>
         </div>
 
@@ -397,6 +444,44 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {(paginated as HotelBooking[]).map((hotel, index) => (
                       <HotelBookingCard key={index} booking={hotel} />
+                    ))}
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div className="mt-8">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        handlePagination={handlePagination}
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Package Bookings - Add this section */}
+          {activeTab === "packages" && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Package Bookings</h2>
+              {packageBookings.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No package bookings found.</p>
+                  <button
+                    onClick={() => router.push("/packages")}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Browse Packages
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {(paginated as PackageBooking[]).map((booking, index) => (
+                      <PackageBookingCard key={index} booking={booking} />
                     ))}
                   </div>
 

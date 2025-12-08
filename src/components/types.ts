@@ -6,6 +6,28 @@ export interface packagesDataTypes {
   priceRange: string;
 }
 
+export interface PackageBooking {
+  _id: string;
+  packageReference: string;
+  image: string;
+  dateBooked: string; // ISO date string
+  dateStart: string; // ISO date string
+  totalPrice: number;
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  packageDetails?: {
+    name?: string;
+    location?: string;
+    duration?: string;
+    packsize?: {
+      min: number;
+      max: number;
+    };
+    price?: number;
+    pricePerHead?: number;
+    inclusions?: string[];
+    description?: string;
+  };
+}
 export interface PackageBookingFormState {
   packageReference: string;
   dateBooked: string;

@@ -17,6 +17,7 @@ import {
 import DestinationModal from "@/components/Modal/DestinationModal";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { Heart, HeartOff } from "lucide-react";
 
 export default function ViewDestination() {
   const { user } = useAuth();
@@ -26,6 +27,47 @@ export default function ViewDestination() {
     useState<destinationsDisplayTypes | null>(null);
   const [hotels, setHotels] = useState<hotelsTypes[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+  const [userFavorites, setUserFavorites] = useState<string[]>([]);
+
+  // Fetch user's favorites on component mount
+  const fetchUserFavorites = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
+
+      const response = await fetch(
+        "http://localhost:5000/api/bookings/favorites/all",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        const favoriteRefs = data.data.map(
+          (fav: destinationsDisplayTypes) => fav.reference
+        );
+        setUserFavorites(favoriteRefs);
+
+        // Check if current destination is in favorites
+        if (
+          destination?.reference &&
+          favoriteRefs.includes(destination.reference)
+        ) {
+          setIsFavorite(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  }, [user, destination?.reference]);
 
   const fetchDestinationAndHotels = useCallback(async () => {
     try {
@@ -35,11 +77,16 @@ export default function ViewDestination() {
       const destinationData = await destinationRes.json();
       setDestination(destinationData);
 
+      // Check if this destination is in user's favorites
+      if (userFavorites.length > 0 && destinationData.reference) {
+        setIsFavorite(userFavorites.includes(destinationData.reference));
+      }
+
       await fetchNearbyHotels(destinationData.location);
     } catch (error) {
       console.error("Error:", error);
     }
-  }, [id]);
+  }, [id, userFavorites]);
 
   const fetchNearbyHotels = async (location: string) => {
     setLoading(true);
@@ -59,10 +106,23 @@ export default function ViewDestination() {
   };
 
   useEffect(() => {
+    if (user) {
+      fetchUserFavorites();
+    }
+  }, [user, fetchUserFavorites]);
+
+  useEffect(() => {
     if (id) {
       fetchDestinationAndHotels();
     }
   }, [id, fetchDestinationAndHotels]);
+
+  // Update favorite status when destination or userFavorites change
+  useEffect(() => {
+    if (destination?.reference && userFavorites.length > 0) {
+      setIsFavorite(userFavorites.includes(destination.reference));
+    }
+  }, [destination?.reference, userFavorites]);
 
   const [paginated, setPaginated] = useState<hotelsTypes[]>([]);
   const itemsPerPage = 3;
@@ -86,13 +146,17 @@ export default function ViewDestination() {
     handlePagination(1);
   }, [hotels, handlePagination]);
 
-  // add to fav
+  // Add to favorites
   const addToFavorites = async (destinationReference: string) => {
-console.log(destinationReference)
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    setIsFavoriteLoading(true);
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.error("No access token found");
         router.push("/login");
         return;
       }
@@ -116,47 +180,80 @@ console.log(destinationReference)
       }
 
       console.log("✅ Added to favorites:", data);
+      setIsFavorite(true);
+      // Update local favorites list
+      setUserFavorites((prev) => [...prev, destinationReference]);
       return data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("❌ Error adding to favorites:", error);
       throw error;
+    } finally {
+      setIsFavoriteLoading(false);
     }
   };
 
-  // remove to fav
-  // const removeFromFavorites = async (destinationReference: string) => {
-  //   try {
-  //     const token = localStorage.getItem("accessToken");
-  //     if (!token) {
-  //       console.error("No access token found");
-  //       router.push("/login");
-  //       return;
-  //     }
+  // Remove from favorites
+  const removeFromFavorites = async (destinationReference: string) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
 
-  //     const response = await fetch(
-  //       `http://localhost:5000/api/bookings/favorites/remove/${destinationReference}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
+    setIsFavoriteLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
 
-  //     const data = await response.json();
+      const response = await fetch(
+        `http://localhost:5000/api/bookings/favorites/remove/${destinationReference}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  //     if (!response.ok) {
-  //       throw new Error(data.message || "Failed to remove from favorites");
-  //     }
+      const data = await response.json();
 
-  //     console.log("✅ Removed from favorites:", data);
-  //     return data;
-  //   } catch (error) {
-  //     console.error("❌ Error removing from favorites:", error);
-  //     throw error;
-  //   }
-  // };
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to remove from favorites");
+      }
+
+      console.log("✅ Removed from favorites:", data);
+      setIsFavorite(false);
+      // Update local favorites list
+      setUserFavorites((prev) =>
+        prev.filter((ref) => ref !== destinationReference)
+      );
+      return data;
+    } catch (error: unknown) {
+      console.error("❌ Error removing from favorites:", error);
+      throw error;
+    } finally {
+      setIsFavoriteLoading(false);
+    }
+  };
+
+  // Toggle favorite
+  const toggleFavorite = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (!destination?.reference) return;
+
+    if (isFavorite) {
+      await removeFromFavorites(destination.reference);
+    } else {
+      await addToFavorites(destination.reference);
+    }
+  };
 
   return (
     <div className="w-full bg-white pt-[50px] flex flex-col">
@@ -208,12 +305,32 @@ console.log(destinationReference)
             </div>
             <div className="flex gap-5 p-[10px]">
               <button
-                onClick={() => {
-                  addToFavorites(destination?.reference || "")
-                }}
-                className="px-4 py-2 rounded-md bg-[#C3B40E] text-white text-nowrap cursor-pointer hover:bg-[#C3B40E]/70 "
+                onClick={toggleFavorite}
+                disabled={isFavoriteLoading || !user}
+                className={`px-4 py-2 rounded-md text-white text-nowrap cursor-pointer flex items-center gap-2 transition-all ease-in-out duration-200 ${
+                  isFavoriteLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : isFavorite
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-[#C3B40E] hover:bg-[#C3B40E]/70"
+                }`}
               >
-                Favorite
+                {isFavoriteLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Processing...
+                  </>
+                ) : isFavorite ? (
+                  <>
+                    <HeartOff className="w-4 h-4" />
+                    Unfavorite
+                  </>
+                ) : (
+                  <>
+                    <Heart className="w-4 h-4" />
+                    Favorite
+                  </>
+                )}
               </button>
 
               <Dialog>
