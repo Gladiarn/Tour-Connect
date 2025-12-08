@@ -1,10 +1,12 @@
 // components/admin/AddHotelModal.tsx
-import React, { useState } from 'react';
-import { Hotel, Loader2, CheckCircle, XCircle, Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Hotel, Loader2, CheckCircle, XCircle, Plus, Trash2, Edit } from 'lucide-react';
+import { hotelsTypes } from '@/components/types';
 
 interface AddHotelModalProps {
   onClose: () => void;
   onHotelAdded: () => void;
+  editingHotel?: hotelsTypes | null;
 }
 
 interface RoomFormData {
@@ -28,7 +30,7 @@ interface HotelFormData {
   rooms: RoomFormData[];
 }
 
-export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalProps) {
+export default function AddHotelModal({ onClose, onHotelAdded, editingHotel }: AddHotelModalProps) {
   const [hotelFormData, setHotelFormData] = useState<HotelFormData>({
     name: '',
     location: '',
@@ -53,6 +55,76 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Initialize form with hotel data when editing
+  useEffect(() => {
+    if (editingHotel) {
+      setHotelFormData({
+        name: editingHotel.name || '',
+        location: editingHotel.location || '',
+        reference: editingHotel.reference || '',
+        images: editingHotel.images && editingHotel.images.length > 0 
+          ? [...editingHotel.images] 
+          : [''],
+        rating: editingHotel.rating || 4.0,
+        rooms: editingHotel.rooms && editingHotel.rooms.length > 0
+          ? editingHotel.rooms.map(room => ({
+              roomReference: room.roomReference || '',
+              name: room.name || '',
+              image: room.image || '',
+              features: room.features && Array.isArray(room.features) 
+                ? [...room.features] 
+                : [''],
+              facilities: room.facilities && Array.isArray(room.facilities)
+                ? [...room.facilities]
+                : [''],
+              description: room.description || '',
+              price: room.price || 0,
+              guests: room.guests && Array.isArray(room.guests)
+                ? [...room.guests]
+                : [''],
+              area: room.area || ''
+            }))
+          : [
+              {
+                roomReference: '',
+                name: '',
+                image: '',
+                features: [''],
+                facilities: [''],
+                description: '',
+                price: 0,
+                guests: [''],
+                area: ''
+              }
+            ]
+      });
+    } else {
+      // Reset form for adding new hotel
+      setHotelFormData({
+        name: '',
+        location: '',
+        reference: '',
+        images: [''],
+        rating: 4.0,
+        rooms: [
+          {
+            roomReference: '',
+            name: '',
+            image: '',
+            features: [''],
+            facilities: [''],
+            description: '',
+            price: 0,
+            guests: [''],
+            area: ''
+          }
+        ]
+      });
+    }
+    setError(null);
+    setSuccess(false);
+  }, [editingHotel]);
 
   const handleHotelChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -240,8 +312,15 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
         }))
       };
 
-      const response = await fetch('http://localhost:5000/api/hotels/create', {
-        method: 'POST',
+      // Use different URLs for add vs edit
+      const url = editingHotel 
+        ? `http://localhost:5000/api/hotels/${editingHotel.reference}` // PUT: /api/hotels/:reference
+        : 'http://localhost:5000/api/hotels/create'; // POST: /api/hotels/create
+      
+      const method = editingHotel ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -252,33 +331,35 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create hotel');
+        throw new Error(result.message || `Failed to ${editingHotel ? 'update' : 'create'} hotel`);
       }
 
       // Success
       setSuccess(true);
       
-      // Reset form
-      setHotelFormData({
-        name: '',
-        location: '',
-        reference: '',
-        images: [''],
-        rating: 4.0,
-        rooms: [
-          {
-            roomReference: '',
-            name: '',
-            image: '',
-            features: [''],
-            facilities: [''],
-            description: '',
-            price: 0,
-            guests: [''],
-            area: ''
-          }
-        ]
-      });
+      // Reset form if creating new hotel
+      if (!editingHotel) {
+        setHotelFormData({
+          name: '',
+          location: '',
+          reference: '',
+          images: [''],
+          rating: 4.0,
+          rooms: [
+            {
+              roomReference: '',
+              name: '',
+              image: '',
+              features: [''],
+              facilities: [''],
+              description: '',
+              price: 0,
+              guests: [''],
+              area: ''
+            }
+          ]
+        });
+      }
 
       // Refresh hotel list after a delay
       setTimeout(() => {
@@ -292,7 +373,7 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
       } else if (typeof error === 'string') {
         setError(error);
       } else {
-        setError('An unexpected error occurred while creating the hotel');
+        setError(`An unexpected error occurred while ${editingHotel ? 'updating' : 'creating'} the hotel`);
       }
     } finally {
       setIsLoading(false);
@@ -334,15 +415,27 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
           <div className="flex justify-center">
             <CheckCircle className="w-12 h-12 text-green-500" />
           </div>
-          <h3 className="text-xl font-semibold text-green-600">Hotel Created Successfully!</h3>
-          <p className="text-gray-600">The new hotel has been added to the system.</p>
+          <h3 className="text-xl font-semibold text-green-600">
+            {editingHotel ? 'Hotel Updated Successfully!' : 'Hotel Created Successfully!'}
+          </h3>
+          <p className="text-gray-600">
+            {editingHotel 
+              ? 'The hotel has been updated in the system.' 
+              : 'The new hotel has been added to the system.'
+            }
+          </p>
         </div>
       ) : (
         <>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Add New Hotel</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {editingHotel ? 'Edit Hotel' : 'Add New Hotel'}
+            </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Create a new hotel with rooms and amenities.
+              {editingHotel 
+                ? 'Update hotel information, rooms, and amenities.'
+                : 'Create a new hotel with rooms and amenities.'
+              }
             </p>
           </div>
 
@@ -414,11 +507,15 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
                     placeholder="e.g., GRAND-PARIS-001"
                     disabled={isLoading}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    readOnly={!!editingHotel} // Make reference read-only when editing
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-gray-50"
                   />
+                  {editingHotel && (
+                    <p className="text-xs text-gray-500">
+                      Reference cannot be changed when editing
+                    </p>
+                  )}
                 </div>
-
-
 
                 {/* Rating */}
                 <div className="space-y-2">
@@ -685,12 +782,21 @@ export default function AddHotelModal({ onClose, onHotelAdded }: AddHotelModalPr
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating Hotel...
+                    {editingHotel ? 'Updating Hotel...' : 'Creating Hotel...'}
                   </>
                 ) : (
                   <>
-                    <Hotel className="w-4 h-4" />
-                    Create Hotel
+                    {editingHotel ? (
+                      <>
+                        <Edit className="w-4 h-4" />
+                        Update Hotel
+                      </>
+                    ) : (
+                      <>
+                        <Hotel className="w-4 h-4" />
+                        Create Hotel
+                      </>
+                    )}
                   </>
                 )}
               </button>

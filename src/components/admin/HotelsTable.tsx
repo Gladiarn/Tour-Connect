@@ -1,18 +1,28 @@
 // components/admin/HotelsTable.tsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { hotelsTypes } from '../types';
 import { Trash2, Edit, X, Check, Loader2 } from 'lucide-react';
+import AddHotelModal from '@/components/Modal/AddHotelModal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface HotelsTableProps {
   data: hotelsTypes[];
   onHotelDeleted?: () => void;
+  onHotelUpdated?: () => void;
 }
 
-export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) {
+export default function HotelsTable({ data, onHotelDeleted, onHotelUpdated }: HotelsTableProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [deletePosition, setDeletePosition] = useState<{x: number, y: number} | null>(null);
-  const deleteButtonRefs = useRef<Record<string, HTMLButtonElement>>({});
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingHotel, setEditingHotel] = useState<hotelsTypes | null>(null);
 
   const handleDeleteClick = (hotelReference: string, event: React.MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -30,6 +40,11 @@ export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) 
     
     setDeletePosition({ x: modalX, y: modalY });
     setConfirmDelete(hotelReference);
+  };
+
+  const handleEditClick = (hotel: hotelsTypes) => {
+    setEditingHotel(hotel);
+    setShowEditDialog(true);
   };
 
   const handleConfirmDelete = async (hotelReference: string) => {
@@ -57,16 +72,11 @@ export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) 
       }
 
       if (result.success) {
-        // Show success alert
         alert('Hotel deleted successfully!');
         
-        // Call the refresh callback if provided
         if (onHotelDeleted) {
           onHotelDeleted();
         }
-        
-        // Also refresh the entire page
-        window.location.reload();
       } else {
         throw new Error(result.message);
       }
@@ -83,6 +93,19 @@ export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) 
   const handleCancelDelete = () => {
     setConfirmDelete(null);
     setDeletePosition(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingHotel(null);
+  };
+
+  const handleHotelUpdated = () => {
+    if (onHotelUpdated) {
+      onHotelUpdated();
+    }
+    setShowEditDialog(false);
+    setEditingHotel(null);
   };
 
   // Close modal when clicking outside
@@ -148,16 +171,14 @@ export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) 
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1">
+                  <button 
+                    onClick={() => handleEditClick(hotel)}
+                    className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1"
+                  >
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
                   <button
-                    ref={el => {
-                      if (el && hotel.reference) {
-                        deleteButtonRefs.current[hotel.reference] = el;
-                      }
-                    }}
                     onClick={(e) => handleDeleteClick(hotel.reference, e)}
                     disabled={isDeleting === hotel.reference}
                     className="text-red-600 hover:text-red-900 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -180,6 +201,27 @@ export default function HotelsTable({ data, onHotelDeleted }: HotelsTableProps) 
           </tbody>
         </table>
       </div>
+
+      {/* Edit Hotel Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingHotel ? "Edit Hotel" : "Add New Hotel"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingHotel 
+                ? `Edit the details for ${editingHotel.name}.` 
+                : "Fill in the details to add a new hotel."}
+            </DialogDescription>
+          </DialogHeader>
+          <AddHotelModal
+            onClose={handleCloseEditDialog}
+            onHotelAdded={handleHotelUpdated}
+            editingHotel={editingHotel}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Modal */}
       {confirmDelete && deletePosition && (

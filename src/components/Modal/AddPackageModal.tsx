@@ -1,10 +1,12 @@
 // components/admin/AddPackageModal.tsx
-import React, { useState } from 'react';
-import { Package, Loader2, CheckCircle, XCircle, Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, Loader2, CheckCircle, XCircle, Plus, Trash2, Edit } from 'lucide-react';
+import { packagesDisplayTypes } from '@/components/types';
 
 interface AddPackageModalProps {
   onClose: () => void;
   onPackageAdded: () => void;
+  editingPackage?: packagesDisplayTypes | null;
 }
 
 interface PackageFormData {
@@ -23,7 +25,7 @@ interface PackageFormData {
   reference: string;
 }
 
-export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageModalProps) {
+export default function AddPackageModal({ onClose, onPackageAdded, editingPackage }: AddPackageModalProps) {
   const [formData, setFormData] = useState<PackageFormData>({
     name: '',
     location: '',
@@ -43,6 +45,47 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Initialize form with package data when editing
+  useEffect(() => {
+    if (editingPackage) {
+      setFormData({
+        name: editingPackage.name || '',
+        location: editingPackage.location || '',
+        inclusions: editingPackage.inclusions && editingPackage.inclusions.length > 0 
+          ? [...editingPackage.inclusions] 
+          : [''],
+        pricePerHead: editingPackage.pricePerHead || 0,
+        duration: editingPackage.duration || '',
+        description: editingPackage.description || '',
+        price: editingPackage.price || 0,
+        images: editingPackage.images && editingPackage.images.length > 0 
+          ? [...editingPackage.images] 
+          : [''],
+        packsize: editingPackage.packsize || { min: 1, max: 10 },
+        reference: editingPackage.reference || ''
+      });
+    } else {
+      // Reset form for adding new package
+      setFormData({
+        name: '',
+        location: '',
+        inclusions: [''],
+        pricePerHead: 0,
+        duration: '',
+        description: '',
+        price: 0,
+        images: [''],
+        packsize: {
+          min: 1,
+          max: 10
+        },
+        reference: ''
+      });
+    }
+    setError(null);
+    setSuccess(false);
+  }, [editingPackage]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -181,14 +224,25 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
       }
 
       // Prepare data for API
-      const dataToSend = {
-        ...formData,
-        inclusions: formData.inclusions.filter(inclusion => inclusion.trim() !== ''),
-        images: formData.images.filter(img => img.trim() !== '')
-      };
+const dataToSend = {
+  ...formData,
+  inclusions: formData.inclusions.filter(inclusion => inclusion.trim() !== ''),
+  images: formData.images.filter(img => img.trim() !== ''),
+  packsize: {
+    min: formData.packsize?.min || 1,  // Always include min
+    max: formData.packsize?.max || 10  // Always include max
+  }
+};
 
-      const response = await fetch('http://localhost:5000/api/packages/create', {
-        method: 'POST',
+      // Use different URLs for add vs edit
+      const url = editingPackage 
+        ? `http://localhost:5000/api/packages/${editingPackage.reference}`
+        : 'http://localhost:5000/api/packages/create';
+      
+      const method = editingPackage ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -199,28 +253,30 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create package');
+        throw new Error(result.message || `Failed to ${editingPackage ? 'update' : 'create'} package`);
       }
 
       // Success
       setSuccess(true);
       
-      // Reset form
-      setFormData({
-        name: '',
-        location: '',
-        inclusions: [''],
-        pricePerHead: 0,
-        duration: '',
-        description: '',
-        price: 0,
-        images: [''],
-        packsize: {
-          min: 1,
-          max: 10
-        },
-        reference: ''
-      });
+      // Reset form if creating new package
+      if (!editingPackage) {
+        setFormData({
+          name: '',
+          location: '',
+          inclusions: [''],
+          pricePerHead: 0,
+          duration: '',
+          description: '',
+          price: 0,
+          images: [''],
+          packsize: {
+            min: 1,
+            max: 10
+          },
+          reference: ''
+        });
+      }
 
       // Refresh package list after a delay
       setTimeout(() => {
@@ -234,7 +290,7 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
       } else if (typeof error === 'string') {
         setError(error);
       } else {
-        setError('An unexpected error occurred while creating the package');
+        setError(`An unexpected error occurred while ${editingPackage ? 'updating' : 'creating'} the package`);
       }
     } finally {
       setIsLoading(false);
@@ -271,15 +327,27 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
           <div className="flex justify-center">
             <CheckCircle className="w-12 h-12 text-green-500" />
           </div>
-          <h3 className="text-xl font-semibold text-green-600">Package Created Successfully!</h3>
-          <p className="text-gray-600">The new package has been added to the system.</p>
+          <h3 className="text-xl font-semibold text-green-600">
+            {editingPackage ? 'Package Updated Successfully!' : 'Package Created Successfully!'}
+          </h3>
+          <p className="text-gray-600">
+            {editingPackage 
+              ? 'The package has been updated in the system.' 
+              : 'The new package has been added to the system.'
+            }
+          </p>
         </div>
       ) : (
         <>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Add New Package</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {editingPackage ? 'Edit Package' : 'Add New Package'}
+            </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Create a new travel package with inclusions, pricing, and details.
+              {editingPackage 
+                ? 'Update package information, inclusions, and pricing.'
+                : 'Create a new travel package with inclusions, pricing, and details.'
+              }
             </p>
           </div>
 
@@ -369,8 +437,14 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
                     placeholder="e.g., Test-001"
                     disabled={isLoading}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    readOnly={!!editingPackage} // Make reference read-only when editing
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-gray-50"
                   />
+                  {editingPackage && (
+                    <p className="text-xs text-gray-500">
+                      Reference cannot be changed when editing
+                    </p>
+                  )}
                 </div>
 
                 {/* Price per Head */}
@@ -571,12 +645,21 @@ export default function AddPackageModal({ onClose, onPackageAdded }: AddPackageM
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating Package...
+                    {editingPackage ? 'Updating Package...' : 'Creating Package...'}
                   </>
                 ) : (
                   <>
-                    <Package className="w-4 h-4" />
-                    Create Package
+                    {editingPackage ? (
+                      <>
+                        <Edit className="w-4 h-4" />
+                        Update Package
+                      </>
+                    ) : (
+                      <>
+                        <Package className="w-4 h-4" />
+                        Create Package
+                      </>
+                    )}
                   </>
                 )}
               </button>

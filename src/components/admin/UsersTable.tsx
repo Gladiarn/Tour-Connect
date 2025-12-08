@@ -2,10 +2,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IUser } from "../types";
 import { Trash2, Edit, X, Check } from "lucide-react";
+import AddUserModal from "@/components/Modal/AddUserModal";
+
+// Import Dialog components
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface UsersTableProps {
   data: IUser[];
   onUserDeleted?: () => void;
+  onUserUpdated?: () => void;
 }
 
 const deleteUser = async (userId: string | undefined) => {
@@ -28,10 +39,12 @@ const deleteUser = async (userId: string | undefined) => {
   }
 };
 
-export default function UsersTable({ data, onUserDeleted }: UsersTableProps) {
+export default function UsersTable({ data, onUserDeleted, onUserUpdated }: UsersTableProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [deletePosition, setDeletePosition] = useState<{x: number, y: number} | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingUser, setEditingUser] = useState<IUser | null>(null);
   const deleteButtonRefs = useRef<Record<string, HTMLButtonElement>>({});
 
   const handleDeleteClick = (userId: string, event: React.MouseEvent) => {
@@ -44,6 +57,11 @@ export default function UsersTable({ data, onUserDeleted }: UsersTableProps) {
       y: rect.top
     });
     setConfirmDelete(userId);
+  };
+
+  const handleEditClick = (user: IUser) => {
+    setEditingUser(user);
+    setShowEditDialog(true);
   };
 
   const handleConfirmDelete = async (userId: string) => {
@@ -73,6 +91,19 @@ export default function UsersTable({ data, onUserDeleted }: UsersTableProps) {
   const handleCancelDelete = () => {
     setConfirmDelete(null);
     setDeletePosition(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingUser(null);
+  };
+
+  const handleUserUpdated = () => {
+    if (onUserUpdated) {
+      onUserUpdated();
+    }
+    setShowEditDialog(false);
+    setEditingUser(null);
   };
 
   // Close modal when clicking outside
@@ -140,7 +171,10 @@ export default function UsersTable({ data, onUserDeleted }: UsersTableProps) {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1">
+                  <button 
+                    onClick={() => handleEditClick(user)}
+                    className="text-blue-600 hover:text-blue-900 mr-3 flex items-center gap-1"
+                  >
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
@@ -172,6 +206,27 @@ export default function UsersTable({ data, onUserDeleted }: UsersTableProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Edit User Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingUser ? "Edit User" : "Add New User"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingUser 
+                ? `Edit the details for ${editingUser.name}.` 
+                : "Fill in the details to add a new user."}
+            </DialogDescription>
+          </DialogHeader>
+          <AddUserModal
+            onClose={handleCloseEditDialog}
+            onUserAdded={handleUserUpdated}
+            editingUser={editingUser}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Modal */}
       {confirmDelete && deletePosition && (

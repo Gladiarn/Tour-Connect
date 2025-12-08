@@ -1,13 +1,15 @@
 // components/admin/AddUserModal.tsx
-import React, { useState } from 'react';
-import { UserPlus, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { UserPlus, Loader2, CheckCircle, XCircle, Edit } from 'lucide-react';
+import { IUser } from '@/components/types';
 
 interface AddUserModalProps {
   onClose: () => void;
   onUserAdded: () => void;
+  editingUser?: IUser | null;
 }
 
-export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps) {
+export default function AddUserModal({ onClose, onUserAdded, editingUser }: AddUserModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,6 +19,28 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Initialize form with user data when editing
+  useEffect(() => {
+    if (editingUser) {
+      setFormData({
+        name: editingUser.name || '',
+        email: editingUser.email || '',
+        password: '', // Password is empty for editing (optional to change)
+        userType: editingUser.userType === 'admin' ? 'admin' : 'user'
+      });
+    } else {
+      // Reset form for adding new user
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        userType: 'user'
+      });
+    }
+    setError(null);
+    setSuccess(false);
+  }, [editingUser]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -38,12 +62,19 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
     if (!formData.email.includes('@')) {
       return 'Please enter a valid email address';
     }
-    if (!formData.password) {
+    
+    // Password validation differs for add vs edit
+    if (!editingUser && !formData.password) {
       return 'Password is required';
     }
-    if (formData.password.length < 6) {
+    if (!editingUser && formData.password.length < 6) {
       return 'Password must be at least 6 characters';
     }
+    // For edit, if password is provided, it must be at least 6 chars
+    if (editingUser && formData.password && formData.password.length < 6) {
+      return 'Password must be at least 6 characters if changing';
+    }
+    
     return null;
   };
 
@@ -66,36 +97,62 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('http://localhost:5000/api/users/create', {
-        method: 'POST',
+      const url = editingUser 
+        ? 'http://localhost:5000/api/users/edit' 
+        : 'http://localhost:5000/api/users/create';
+      
+      const method = editingUser ? 'PUT' : 'POST';
+
+      // Prepare typed request body
+      const requestBody: {
+        name: string;
+        email: string;
+        userType: 'user' | 'admin';
+        id?: string;
+        password?: string;
+      } = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        userType: formData.userType
+      };
+
+      // Add ID for edit mode
+      if (editingUser) {
+        requestBody.id = editingUser._id;
+      }
+
+      // Add password only if provided (or for new user)
+      if (formData.password || !editingUser) {
+        requestBody.password = formData.password;
+      }
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          password: formData.password,
-          userType: formData.userType
-        })
+        body: JSON.stringify(requestBody)
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create user');
+        throw new Error(result.message || `Failed to ${editingUser ? 'update' : 'create'} user`);
       }
 
       // Success
       setSuccess(true);
       
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        userType: 'user'
-      });
+      // Reset form if creating new user
+      if (!editingUser) {
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          userType: 'user'
+        });
+      }
 
       // Refresh user list after a delay
       setTimeout(() => {
@@ -104,14 +161,13 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
       }, 1500);
 
     } catch (error) {
-
-    if (error instanceof Error) {
-      setError(error.message);
-    } else if (typeof error === 'string') {
-      setError(error);
-    } else {
-      setError('An unexpected error occurred while creating the user');
-    }
+      if (error instanceof Error) {
+        setError(error.message);
+      } else if (typeof error === 'string') {
+        setError(error);
+      } else {
+        setError(`An unexpected error occurred while ${editingUser ? 'updating' : 'creating'} the user`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -138,15 +194,27 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
           <div className="flex justify-center">
             <CheckCircle className="w-12 h-12 text-green-500" />
           </div>
-          <h3 className="text-xl font-semibold text-green-600">User Created Successfully!</h3>
-          <p className="text-gray-600">The new user has been added to the system.</p>
+          <h3 className="text-xl font-semibold text-green-600">
+            {editingUser ? 'User Updated Successfully!' : 'User Created Successfully!'}
+          </h3>
+          <p className="text-gray-600">
+            {editingUser 
+              ? 'The user has been updated in the system.' 
+              : 'The new user has been added to the system.'
+            }
+          </p>
         </div>
       ) : (
         <>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Add New User</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {editingUser ? 'Edit User' : 'Add New User'}
+            </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Create a new user account with specific role and permissions.
+              {editingUser 
+                ? 'Update user information and permissions.'
+                : 'Create a new user account with specific role and permissions.'
+              }
             </p>
           </div>
 
@@ -213,14 +281,17 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
                 <option value="admin">Admin</option>
               </select>
               <p className="text-xs text-gray-500">
-                Admin users have full access to all features including user management.
+                {editingUser 
+                  ? 'Select the user role for this account.'
+                  : 'Admin users have full access to all features including user management.'
+                }
               </p>
             </div>
 
             {/* Password Field */}
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password <span className="text-red-500">*</span>
+                Password {!editingUser && <span className="text-red-500">*</span>}
               </label>
               <input
                 type="text"
@@ -228,16 +299,22 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter password (min. 6 characters)"
+                placeholder={
+                  editingUser 
+                    ? "Enter new password (leave blank to keep current)" 
+                    : "Enter password (min. 6 characters)"
+                }
                 disabled={isLoading}
-                required
+                required={!editingUser}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
               <p className="text-xs text-gray-500">
-                Password must be at least 6 characters long.
+                {editingUser 
+                  ? 'Leave blank to keep current password. If provided, must be at least 6 characters.'
+                  : 'Password must be at least 6 characters long.'
+                }
               </p>
             </div>
-
 
             <div className="flex justify-end gap-3 pt-4">
               <button
@@ -256,12 +333,21 @@ export default function AddUserModal({ onClose, onUserAdded }: AddUserModalProps
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating User...
+                    {editingUser ? 'Updating User...' : 'Creating User...'}
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4" />
-                    Create User
+                    {editingUser ? (
+                      <>
+                        <Edit className="w-4 h-4" />
+                        Update User
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        Create User
+                      </>
+                    )}
                   </>
                 )}
               </button>
