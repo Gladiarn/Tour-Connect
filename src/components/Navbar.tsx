@@ -13,6 +13,15 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 export default function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -24,38 +33,36 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    
-    if (refreshToken) {
-      const response = await fetch("http://localhost:5000/api/users/logout", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
+      const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!response.ok) {
-        console.warn("Backend logout failed, but clearing frontend anyway");
+      if (refreshToken) {
+        const response = await fetch("http://localhost:5000/api/users/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
+
+        if (!response.ok) {
+          console.warn("Backend logout failed, but clearing frontend anyway");
+        }
+
+        await logout();
       }
-
-      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-    
-  } catch (error) {
-    console.error("Logout error:", error);
-
-  }
-  }
+  };
 
   const handleProfile = () => {
-    if (!user){
-      router.push('/login');
+    if (!user) {
+      router.push("/login");
       return;
     }
-    router.push('/Profile');
+    router.push("/Profile");
     return;
-  }
+  };
   return (
     <div className="flex flex-col w-full h-fit fixed top-0 left-0 z-50">
       {/* Menu container */}
@@ -66,10 +73,16 @@ export default function Navbar() {
           </div>
           {/* Menu */}
           <div className="hidden lg:flex text-[16px] text-[#3C3D37] w-fit h-fit gap-[15px] px-[23px] font-light ">
-            <Link href={'/'} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
+            <Link
+              href={"/"}
+              className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+            >
               Home
             </Link>
-            <p onClick={handleProfile} className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
+            <p
+              onClick={handleProfile}
+              className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out"
+            >
               My Bookings
             </p>
             <p className="cursor-pointer relative before:content-[''] before:absolute before:bottom-0 before:left-[50%] before:translate-x-[-50%] before:h-[1px] before:w-0 hover:before:w-full before:bg-[#3C3D37] before:transition-all ease-in-out">
@@ -137,7 +150,10 @@ export default function Navbar() {
           </div>
 
           {user ? (
-            <button onClick={handleLogout} className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center">
+            <button
+              onClick={handleLogout}
+              className="hover:text-[#3c3d37] hover:bg-white hover:border-[#3c3d37] border transition-all ease-in-out cursor-pointer flex bg-[#3c3d37] text-white rounded-full w-fit h-fit px-[20px] py-[5px] items-center"
+            >
               Log-Out
             </button>
           ) : (
@@ -150,8 +166,98 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Mobile menu section */}
         <div className="flex lg:hidden">
-          <Menu className="text-black" />
+          <Sheet>
+            <SheetTrigger>
+              <Menu className="text-black cursor-pointer" />
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-[250px] bg-background/50 backdrop-blur-md"
+            >
+              <SheetHeader>
+                <SheetTitle className="text-[20px] text-accent font-bold flex flex-start">
+                  TourConnect
+                </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Sidebar navigation links
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="mt-8 space-y-6 text-foreground flex flex-col">
+                <Link
+                  href={"/"}
+                  className="cursor-pointer text-[16px] hover:text-blue-500 transition-colors"
+                >
+                  Home
+                </Link>
+                <button
+                  onClick={handleProfile}
+                  className="cursor-pointer text-left text-[16px] hover:text-blue-500 transition-colors"
+                >
+                  My Bookings
+                </button>
+                <p className="cursor-pointer text-[16px] hover:text-blue-500 transition-colors">
+                  About
+                </p>
+                <button
+                  onClick={() => {
+                    window.scrollTo({
+                      top: document.body.scrollHeight,
+                      behavior: "smooth",
+                    });
+                  }}
+                  className="cursor-pointer text-left text-[16px] hover:text-blue-500 transition-colors"
+                >
+                  Contact Us
+                </button>
+                
+                {/* Mobile language selector */}
+                <div className="pt-4 border-t">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex bg-[#3c3d37] text-[#ffffff] w-[30px] h-[30px] justify-center rounded-full items-center">
+                      <CiGlobe className="h-[20px] w-[20px]" />
+                    </div>
+                    <p className="text-[16px] font-medium">Language</p>
+                  </div>
+                  <div className="flex flex-col gap-2 pl-2">
+                    <button
+                      onClick={() => setLanguage("Filipino")}
+                      className="text-left text-[16px] hover:text-blue-500 transition-colors"
+                    >
+                      🇵🇭 Filipino
+                    </button>
+                    <button
+                      onClick={() => setLanguage("English")}
+                      className="text-left text-[16px] hover:text-blue-500 transition-colors"
+                    >
+                      🇺🇸 English
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Mobile login/logout */}
+                <div className="pt-4 border-t">
+                  {user ? (
+                    <button
+                      onClick={handleLogout}
+                      className="w-full py-2 px-4 bg-[#3c3d37] text-white rounded-full hover:bg-[#2d2e29] transition-colors"
+                    >
+                      Log-Out
+                    </button>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="block w-full py-2 px-4 bg-[#3c3d37] text-white rounded-full hover:bg-[#2d2e29] transition-colors text-center"
+                    >
+                      Log-In
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
