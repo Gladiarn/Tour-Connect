@@ -240,7 +240,7 @@ export default function Packages() {
                 </PopoverContent>
               </Popover>
             </div>
-            <button onClick={() => console.log(packagesData)}>test</button>
+
           </div>
         </div>
       </div>
