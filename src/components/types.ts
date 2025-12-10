@@ -2,7 +2,7 @@ import { JSX } from "react";
 
 export interface packagesDataTypes {
   tourType: string;
-  dateRange: { startDate: Date | undefined; endDate: Date | undefined };
+  packSize: string;
   priceRange: string;
 }
 
