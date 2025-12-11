@@ -180,32 +180,33 @@ export default function AddHotelModal({ onClose, onHotelAdded, editingHotel }: A
     }));
   };
 
-  const handleRoomFeaturesChange = (roomIndex: number, value: string) => {
-    const newRooms = [...hotelFormData.rooms];
-    newRooms[roomIndex].features = value.split(',').map(item => item.trim()).filter(item => item !== '');
-    setHotelFormData(prev => ({
-      ...prev,
-      rooms: newRooms
-    }));
-  };
+const handleRoomFeaturesChange = (roomIndex: number, value: string) => {
+  const newRooms = [...hotelFormData.rooms];
+  // Split by comma but preserve spaces after commas
+  newRooms[roomIndex].features = value.split(',').map(item => item.trim());
+  setHotelFormData(prev => ({
+    ...prev,
+    rooms: newRooms
+  }));
+};
 
-  const handleRoomFacilitiesChange = (roomIndex: number, value: string) => {
-    const newRooms = [...hotelFormData.rooms];
-    newRooms[roomIndex].facilities = value.split(',').map(item => item.trim()).filter(item => item !== '');
-    setHotelFormData(prev => ({
-      ...prev,
-      rooms: newRooms
-    }));
-  };
+const handleRoomFacilitiesChange = (roomIndex: number, value: string) => {
+  const newRooms = [...hotelFormData.rooms];
+  newRooms[roomIndex].facilities = value.split(',').map(item => item.trim());
+  setHotelFormData(prev => ({
+    ...prev,
+    rooms: newRooms
+  }));
+};
 
-  const handleRoomGuestsChange = (roomIndex: number, value: string) => {
-    const newRooms = [...hotelFormData.rooms];
-    newRooms[roomIndex].guests = value.split(',').map(item => item.trim()).filter(item => item !== '');
-    setHotelFormData(prev => ({
-      ...prev,
-      rooms: newRooms
-    }));
-  };
+const handleRoomGuestsChange = (roomIndex: number, value: string) => {
+  const newRooms = [...hotelFormData.rooms];
+  newRooms[roomIndex].guests = value.split(',').map(item => item.trim());
+  setHotelFormData(prev => ({
+    ...prev,
+    rooms: newRooms
+  }));
+};
 
   const addRoom = () => {
     setHotelFormData(prev => ({
