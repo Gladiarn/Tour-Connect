@@ -284,14 +284,14 @@ export default function ViewDestination() {
       {/* Body */}
       <div className="w-full bg-white p-[30px] text-[#3C3D37] flex flex-col gap-6">
         <div className="w-full flex flex-col sm:flex-row gap-4">
-          <div className="w-full flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-4 min-w-[200px]">
             <div>
               <p className="text-[25px] font-semibold">{destination?.name}</p>
               <p className="text-[14px]">{destination?.location}</p>
             </div>
-            <div>
+            <div className=" text-wrap w-full">
               <p className="font-semibold text-[17px]">Description</p>
-              <p className="text-[15px]">{destination?.description}</p>
+              <p className="text-[15px] text-wrap break-words">{destination?.description}</p>
             </div>
           </div>
           <div className="flex flex-col gap-4">
