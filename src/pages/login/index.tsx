@@ -47,6 +47,7 @@ export default function Index() {
   const [isLogin, setisLogin] = useState<boolean>(true);
 
   const toggleLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    setMessage('');
     event.preventDefault(); // Prevent default link behavior
     clearFields();
     setisLogin(!isLogin);
@@ -71,7 +72,8 @@ export default function Index() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw data;
+        setMessage('Incorrect email or password.');
+        setSuccess(false);
       }
 
       login(data.accessToken, data.refreshToken);
@@ -206,6 +208,7 @@ export default function Index() {
                 <button className="w-full h-[50px] text-xl font-semibold text-white bg-[#3C3D37] border-none cursor-pointer hover:bg-[#697565] rounded-[10px]">
                   Continue
                 </button>
+                <p className={`${success ? 'text-green-500' : 'text-red-500'} text-[12px] `}>{message}</p>
                 <p>
                   Don&apos;t have an account yet?{" "}
                   <Link
