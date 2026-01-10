@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog"; // Adjust the import path based on your setup
+} from "@/components/ui/dialog";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -110,59 +110,59 @@ export default function AdminDashboard() {
   }, [activeTab, destinations, hotels, packages, users]);
 
   // Get the appropriate modal component based on active tab
-const getModalComponent = () => {
-  switch (activeTab) {
-    case "destinations":
-      return (
-        <AddDestinationModal
-          onClose={() => setShowModal(false)}
-          onDestinationAdded={refreshDestinations}
-        />
-      );
-    case "hotels":
-      return (
-        <AddHotelModal
-          onClose={() => setShowModal(false)}
-          onHotelAdded={refreshHotels}
-        />
-      );
-    case "packages":
-      return (
-        <AddPackageModal
-          onClose={() => setShowModal(false)}
-          onPackageAdded={refreshPackages}
-        />
-      );
-    case "users":
-      return (
-        <AddUserModal
-          onClose={() => setShowModal(false)}
-          onUserAdded={() => {
-            refreshUsers();
-            setShowModal(false);
-          }}
-        />
-      );
-    default:
-      return null;
-  }
-};
+  const getModalComponent = () => {
+    switch (activeTab) {
+      case "destinations":
+        return (
+          <AddDestinationModal
+            onClose={() => setShowModal(false)}
+            onDestinationAdded={refreshDestinations}
+          />
+        );
+      case "hotels":
+        return (
+          <AddHotelModal
+            onClose={() => setShowModal(false)}
+            onHotelAdded={refreshHotels}
+          />
+        );
+      case "packages":
+        return (
+          <AddPackageModal
+            onClose={() => setShowModal(false)}
+            onPackageAdded={refreshPackages}
+          />
+        );
+      case "users":
+        return (
+          <AddUserModal
+            onClose={() => setShowModal(false)}
+            onUserAdded={() => {
+              refreshUsers();
+              setShowModal(false);
+            }}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
-// Also update the modal title
-const getModalTitle = () => {
-  switch (activeTab) {
-    case "destinations":
-      return "Add New Destination";
-    case "hotels":
-      return "Add New Hotel";
-    case "packages":
-      return "Add New Package";
-    case "users":
-      return "Add New User";
-    default:
-      return "Add Record";
-  }
-};
+  // Also update the modal title
+  const getModalTitle = () => {
+    switch (activeTab) {
+      case "destinations":
+        return "Add New Destination";
+      case "hotels":
+        return "Add New Hotel";
+      case "packages":
+        return "Add New Package";
+      case "users":
+        return "Add New User";
+      default:
+        return "Add Record";
+    }
+  };
 
   // Handle pagination
   const handlePagination = useCallback(
@@ -225,8 +225,21 @@ const getModalTitle = () => {
 
   // Fetch packages
   const fetchPackages = async () => {
+    const safeFilters: {
+      tourType: string;
+      packSize: string;
+      priceRange: string;
+    } = {
+      tourType: "",
+      packSize: "",
+      priceRange: "",
+    };
+
     try {
-      const res = await fetch("http://localhost:5000/api/packages/all");
+      const res = await fetch("http://localhost:5000/api/packages/filter", {
+        method: "POST",
+        body: JSON.stringify(safeFilters),
+      });
 
       if (!res.ok) {
         throw new Error(`Failed to fetch packages: ${res.status}`);
