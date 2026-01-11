@@ -225,38 +225,39 @@ export default function AdminDashboard() {
 
   // Fetch packages
   const fetchPackages = async () => {
-    const safeFilters: {
-      tourType: string;
-      packSize: string;
-      priceRange: string;
-    } = {
-      tourType: "",
-      packSize: "",
-      priceRange: "",
-    };
+  try {
+    console.log("Fetching packages...");
+    
+    const res = await fetch("http://localhost:5000/api/packages/filter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tourType: "",
+        packSize: "",
+        priceRange: "",
+      }),
+    });
 
-    try {
-      const res = await fetch("http://localhost:5000/api/packages/filter", {
-        method: "POST",
-        body: JSON.stringify(safeFilters),
-      });
+    if (!res.ok) {
+      console.warn(`Packages API returned ${res.status}. Using empty array.`);
+      setPackages([]);
+      return;
+    }
 
-      if (!res.ok) {
-        throw new Error(`Failed to fetch packages: ${res.status}`);
-      }
+    const result = await res.json();
 
-      const result = await res.json();
-
-      if (result.success) {
-        setPackages(result.data || []);
-      } else {
-        setPackages([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch packages:", error);
+    if (result.success) {
+      setPackages(result.data || []);
+    } else {
       setPackages([]);
     }
-  };
+  } catch (error) {
+    console.warn("Failed to fetch packages, using empty array:", error);
+    setPackages([]);
+  }
+};
 
   const fetchUsers = async () => {
     try {
