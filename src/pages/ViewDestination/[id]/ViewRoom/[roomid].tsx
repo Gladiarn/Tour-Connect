@@ -11,7 +11,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import SmallCard from "@/components/Card/SmallCard";
 import { useRouter } from "next/router";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/context/AuthContext";
 
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -20,7 +20,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 };
 
 export default function ViewRoomPage() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const router = useRouter();
   const { id, roomid } = router.query;
 

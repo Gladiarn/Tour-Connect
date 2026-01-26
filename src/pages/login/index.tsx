@@ -5,8 +5,8 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
+import { useAuthStore } from "@/context/AuthContext";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -53,7 +53,7 @@ export default function Index() {
     setisLogin(!isLogin);
   };
 
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const router = useRouter();
   const loginHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

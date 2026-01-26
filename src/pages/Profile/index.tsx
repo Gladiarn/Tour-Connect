@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "@/context/AuthContext";
 import ProfileCard from "@/components/Card/ProfileCard";
 import FavoriteCard from "@/components/Card/FavoriteCard";
 import Pagination from "@/components/Pagination/Pagination";
@@ -13,10 +12,11 @@ import {
 } from "@/components/types";
 import HotelBookingCard from "@/components/Card/HotelBookingCard";
 import PackageBookingCard from "@/components/Card/PackageBookingCard";
+import { useAuthStore } from "@/context/AuthContext";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [fetchUser, setFetchUser] = useState<User | null>(null);
   const [ongoingBookings, setOngoingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);

@@ -9,7 +9,7 @@ import {
 import { CheckCircle2, Calendar, MapPin, CreditCard, Users, Download, Package } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { BookingFormState, destinationsDisplayTypes, packagesDisplayTypes, PackageBookingFormState } from '../types';
-import { useAuth } from '@/context/AuthContext';
+import { useAuthStore } from '@/context/AuthContext';
 
 interface ReceiptModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export default function ReceiptModal({
   destination,
   packageItem 
 }: ReceiptModalProps) {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   // Type guard to check if booking is a PackageBookingFormState
   const isPackageBooking = (booking: BookingFormState | PackageBookingFormState): booking is PackageBookingFormState => {
