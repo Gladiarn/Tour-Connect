@@ -10,7 +10,7 @@ import { useSection } from "@/context/SectionContext";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+
 import { useRouter } from "next/router";
 
 import {
@@ -21,10 +21,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuthStore } from "@/context/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const isHome = pathname === "/";
 

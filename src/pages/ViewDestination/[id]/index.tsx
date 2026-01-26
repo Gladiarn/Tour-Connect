@@ -15,12 +15,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import DestinationModal from "@/components/Modal/DestinationModal";
-import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { Heart, HeartOff } from "lucide-react";
+import { useAuthStore } from "@/context/AuthContext";
 
 export default function ViewDestination() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const router = useRouter();
   const { id } = router.query;
   const [destination, setDestination] =

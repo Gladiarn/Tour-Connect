@@ -13,8 +13,8 @@ import {
   IUser,
   packagesDisplayTypes,
 } from "@/components/types";
-import { useAuth } from "@/context/AuthContext";
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuthStore } from "@/context/AuthContext";
 import Link from "next/link";
 import Pagination from "@/components/Pagination/Pagination";
 import { useRouter } from "next/router";
@@ -31,7 +31,8 @@ import {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout, isLoading } = useAuthStore();
+
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
 
   // Data states
   const [destinations, setDestinations] = useState<destinationsDisplayTypes[]>(
-    []
+    [],
   );
   const [hotels, setHotels] = useState<hotelsTypes[]>([]);
   const [packages, setPackages] = useState<packagesDisplayTypes[]>([]);
@@ -176,7 +177,7 @@ export default function AdminDashboard() {
       setPaginated(currentData.slice(startIndex, endIndex));
       setCurrentPage(page);
     },
-    [getCurrentData, itemsPerPage]
+    [getCurrentData, itemsPerPage],
   );
 
   // Fetch destinations
@@ -225,39 +226,39 @@ export default function AdminDashboard() {
 
   // Fetch packages
   const fetchPackages = async () => {
-  try {
-    console.log("Fetching packages...");
-    
-    const res = await fetch("http://localhost:5000/api/packages/filter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        tourType: "",
-        packSize: "",
-        priceRange: "",
-      }),
-    });
+    try {
+      console.log("Fetching packages...");
 
-    if (!res.ok) {
-      console.warn(`Packages API returned ${res.status}. Using empty array.`);
+      const res = await fetch("http://localhost:5000/api/packages/filter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tourType: "",
+          packSize: "",
+          priceRange: "",
+        }),
+      });
+
+      if (!res.ok) {
+        console.warn(`Packages API returned ${res.status}. Using empty array.`);
+        setPackages([]);
+        return;
+      }
+
+      const result = await res.json();
+
+      if (result.success) {
+        setPackages(result.data || []);
+      } else {
+        setPackages([]);
+      }
+    } catch (error) {
+      console.warn("Failed to fetch packages, using empty array:", error);
       setPackages([]);
-      return;
     }
-
-    const result = await res.json();
-
-    if (result.success) {
-      setPackages(result.data || []);
-    } else {
-      setPackages([]);
-    }
-  } catch (error) {
-    console.warn("Failed to fetch packages, using empty array:", error);
-    setPackages([]);
-  }
-};
+  };
 
   const fetchUsers = async () => {
     try {
@@ -276,7 +277,7 @@ export default function AdminDashboard() {
 
       if (!res.ok) {
         throw new Error(
-          `Failed to fetch users: ${res.status} ${res.statusText}`
+          `Failed to fetch users: ${res.status} ${res.statusText}`,
         );
       }
 
@@ -329,7 +330,7 @@ export default function AdminDashboard() {
 
   // Handle tab change
   const handleTabChange = (
-    tab: "destinations" | "hotels" | "packages" | "users"
+    tab: "destinations" | "hotels" | "packages" | "users",
   ) => {
     setActiveTab(tab);
     setCurrentPage(1);
